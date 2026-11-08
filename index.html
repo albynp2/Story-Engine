@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Story Engine</title>
+<style>
+:root{--bg:#faf9f6;--card:#fff;--tx:#1d1d1b;--mu:#6b6a64;--ac:#c2410c;--bd:#e4e2da;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--card:#202024;--tx:#ececea;--mu:#9a99a0;--ac:#fb923c;--bd:#33333a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:8px 0 2px}p.s{color:var(--mu);margin:0 0 16px}
+section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+h2{font-size:15px;margin:0 0 8px}h2 span{background:var(--ac);color:#fff;border-radius:50%;display:inline-block;width:22px;height:22px;text-align:center;line-height:22px;font-size:13px;margin-right:6px}
+input,textarea,select{width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+textarea{min-height:110px;font:13px/1.4 ui-monospace,monospace}
+button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer;margin-top:8px}
+button.g{background:transparent;color:var(--ac);border:1px solid var(--ac);margin-top:0;padding:4px 10px;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1;min-width:120px}
+.sc{border-top:1px solid var(--bd);padding-top:10px;margin-top:10px}
+.sc img{max-width:100%;border-radius:8px;margin-top:6px;display:block}
+.err{color:#dc2626;font-size:13px}
+</style><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>:root{--bg:#edf2f1;--card:#fff;--tx:#12201e;--mu:#586b68;--ac:#0f766e;--on:#fff;--bd:#d9e2e0;--soft:#e3f1ee}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1514;--card:#151e1d;--tx:#e8f0ee;--mu:#93a8a4;--ac:#2dd4bf;--on:#04231f;--bd:#25322f;--soft:#15312e}}body{font:15px/1.6 "Plus Jakarta Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}main{max-width:820px;padding:28px 18px 60px}h1{font-size:clamp(28px,6vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:6px 0 8px}p.s{font-size:14px}section{border-radius:18px;padding:20px;margin-bottom:16px}h2{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px;margin:0 0 12px;letter-spacing:-.01em}h2 span{background:var(--soft);color:var(--ac);width:28px;height:28px;line-height:28px;font-size:14px;font-weight:700;margin:0;flex:none;border-radius:9px}input,textarea,select{border-radius:10px;padding:10px 12px;transition:border-color .15s,box-shadow .15s}input:focus,textarea:focus,select:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--soft)}textarea{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace}button{background:var(--ac);color:var(--on);border-radius:10px;padding:10px 18px;font-weight:600;transition:transform .1s,opacity .15s}button:hover{opacity:.9}button:active{transform:scale(.98)}button:disabled{opacity:.5;cursor:wait}button.g{background:transparent;color:var(--ac);border:1px solid var(--bd);padding:6px 12px;font-weight:600}button.g:hover{border-color:var(--ac);background:var(--soft)}:focus-visible{outline:2px solid var(--ac);outline-offset:2px}#dz{background:var(--soft);font-weight:600;color:var(--ac);border-radius:14px!important}.sc img{border-radius:12px}summary{font-weight:600;color:var(--ac)}code{background:var(--soft);padding:1px 6px;border-radius:6px;font-size:13px}input[type=file]{padding:8px;font-size:13px}</style><script src="jszip.min.js"></script><style>.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:12px}label.f{display:block;font-weight:600;font-size:13px}label.f small{display:block;font-weight:400;color:var(--mu);font-size:12px;line-height:1.35;margin:1px 0 6px;min-height:32px}</style>
+<style>
+body{display:flex;min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--bg);border-right:1px solid var(--bd);padding:20px 14px;z-index:20;overflow:auto}
+.brand{font-size:20px;font-weight:800;color:var(--ac);padding:4px 10px 2px}
+.brand-sub{font-size:11px;color:var(--mu);padding:0 10px 18px}
+.nav-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mu);font-weight:800;padding:10px}
+.nav{display:flex;flex-direction:column;gap:5px}
+.nav button{width:100%;text-align:left;background:transparent;color:var(--tx);border:1px solid transparent;padding:11px 12px;border-radius:10px;font-weight:700;display:flex;align-items:center;gap:10px}
+.nav button:hover{background:var(--soft);border-color:var(--bd)}
+.nav button.active{background:var(--soft);color:var(--ac);border-color:var(--bd)}
+.nav .num{width:23px;height:23px;border-radius:7px;display:grid;place-items:center;background:var(--soft);color:var(--mu);font-size:11px}
+.nav button.active .num{background:var(--ac);color:var(--on)}
+.nav .desc{font-size:10px;font-weight:400;color:var(--mu);margin-top:2px}
+.app-main{margin-left:250px!important;max-width:1000px!important;width:calc(100% - 250px)}
+.modebar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--soft)}
+.modebar h1{margin:0;font-size:21px}
+.modebar p{margin:3px 0 0;color:var(--mu);font-size:12px}
+.mode-chip{font-size:11px;font-weight:800;color:var(--ac);border:1px solid var(--bd);padding:6px 9px;border-radius:999px;white-space:nowrap}
+#newsContext{display:none;margin-top:10px}
+#newsContext textarea{min-height:120px}
+@media(max-width:820px){
+  body{display:block}
+  .sidebar{position:sticky;top:0;width:100%;height:auto;padding:10px;display:flex;align-items:center;gap:8px;overflow:auto;border-right:0;border-bottom:1px solid var(--bd)}
+  .brand,.brand-sub,.nav-title{display:none}
+  .nav{flex-direction:row;min-width:max-content}
+  .nav button{width:auto;min-width:145px}
+  .nav .desc{display:none}
+  .app-main{margin-left:0!important;width:100%;padding:14px}
+}
+</style>
+</head><body>
+<aside class="sidebar">
+  <div class="brand">Story Engine</div>
+  <div class="brand-sub">AI Content Studio • Local</div>
+  <div class="nav-title">Content Factory</div>
+  <div class="nav">
+    <button data-mode="explainer" onclick="setMode('explainer')"><span class="num">01</span><span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></button>
+    <button data-mode="news" onclick="setMode('news')"><span class="num">02</span><span>NEWS<div class="desc">Berita + visualisasi AI</div></span></button>
+    <button data-mode="drama" onclick="setMode('drama')"><span class="num">03</span><span>DRAMA AI<div class="desc">Cerita sinematik</div></span></button>
+    <button data-mode="horror" onclick="setMode('horror')"><span class="num">04</span><span>HORROR AI<div class="desc">Cinematic horror</div></span></button>
+    <button data-mode="psychology" onclick="setMode('psychology')"><span class="num">05</span><span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></button>
+    <button data-mode="history" onclick="setMode('history')"><span class="num">06</span><span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></button>
+  </div>
+</aside>
+<main class="app-main">
+
+<div class="modebar">
+  <div><h1 id="modeTitle">Story Engine</h1><p id="modeDesc">Ubah satu judul jadi video bergambar, lengkap dengan suara dan subtitle.</p></div>
+  <div class="mode-chip" id="modeChip">EXPLAINER</div>
+</div>
+
+
+<input type="hidden" id="mode" value="explainer">
+<section><h2><span>1</span>Judul &amp; prompt untuk ChatGPT</h2>
+<label class="f">Judul cerita<small>Ide ceritanya, satu kalimat cukup</small><input id="title" placeholder="Judul, mis. Ayah Aku Ternyata Seorang CEO"></label>
+<div id="newsContext">
+<label class="f">Konteks / bahan berita
+<small>Tempel ringkasan berita, fakta mentah, atau beberapa sumber. Untuk NEWS, engine akan memprioritaskan fakta yang diberikan dan tidak mengarang detail.</small>
+<textarea id="newsSource" placeholder="Tempel isi berita atau poin faktanya di sini..."></textarea>
+</label>
+</div>
+
+<div class="grid">
+<label class="f">Bahasa<small>Bahasa narasi, subtitle, dan isi JSON dari ChatGPT</small><select id="lang" onchange="rf()"><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></label>
+<label class="f">Jumlah adegan<small>1 adegan = 1 gambar dari Flow</small><select id="n" onchange="rf()"><option>6</option><option selected>8</option><option>10</option><option>12</option></select></label>
+<label class="f">Gaya tema<small id="thd"></small><select id="theme" onchange="rf()"></select></label>
+<label class="f">Format video<small id="fmd"></small><select id="fmt" onchange="fm()"><option value="tt">TikTok</option><option value="ig">Instagram Reels</option><option value="fb">Facebook Reels</option><option value="yt">YouTube Shorts</option><option value="yl">YouTube (landscape 16:9)</option><option value="sq">Persegi 1:1 (feed)</option></select></label>
+</div>
+<input id="style" placeholder="Tulis gaya visual sendiri (bahasa Inggris)" style="display:none;margin-top:10px">
+<button onclick="mk1()">Buat prompt</button>
+<textarea id="p1" readonly style="margin-top:8px;display:none"></textarea>
+<button class="g" id="c1" style="display:none;margin-top:6px" onclick="cp('p1')">Copy</button></section>
+
+<section><h2><span>2</span>Cerita JSON dari ChatGPT</h2><label class="f" style="max-width:360px">Cara dapat JSON<small>Manual: tempel balasan ChatGPT di kotak bawah. Otomatis: dikirim ke OpenAI lewat API.</small><select id="jm" onchange="jmd()"><option value="man">Manual (tempel dari ChatGPT)</option><option value="auto">Otomatis (API OpenAI)</option></select></label><div id="jauto" style="display:none"><div class="grid"><label class="f">API key OpenAI<small>Disimpan di browser laptop ini saja</small><input id="ok" type="password" placeholder="sk-..." autocomplete="off"></label><label class="f">Model<small>Ganti kalau akun lu pakai model lain</small><input id="om" value="gpt-4o-mini"></label></div><button onclick="oa()">Buat cerita otomatis</button> <small id="oam" style="color:var(--mu)"></small><p class="s" style="margin:6px 0 0">Prompt dari langkah 1 dikirim ke OpenAI, balasannya langsung jadi prompt Flow di langkah 3. Butuh internet dan saldo API.</p></div>
+<textarea id="js" placeholder='{"title":...,"scenes":[...]}'></textarea>
+<button onclick="gen()">Generate</button> <span class="err" id="er"></span></section>
+
+<section id="s3" style="display:none"><h2><span>3</span>Prompt untuk Google Flow + upload gambar</h2><p class="s" style="margin:0 0 8px">Tiap prompt diawali nama file gambar1, gambar2, dan seterusnya. Kalau nama file dari Flow tetap acak, drag ZIP-nya ke sini lalu klik Simpan ZIP gambar bernomor.</p><textarea id="all" readonly style="min-height:90px"></textarea><button style="margin:6px 0 4px" onclick="cp('all')">Copy semua prompt</button><div id="dz" onclick="$('zf').click()" style="border:2px dashed var(--ac);border-radius:10px;padding:18px;text-align:center;margin:8px 0;cursor:pointer">Drag ZIP dari Flow ke sini (atau klik)<br><small id="zm" style="color:var(--mu)"></small></div><input id="zf" type="file" multiple accept=".zip,image/*" style="display:none" onchange="fl(this.files)"><label class="f" style="margin-top:8px">Cara baca gambar dari ZIP<small>Urut: file pertama jadi adegan 1, lanjut sampai adegan terakhir</small><select id="zmode"><option value="seq">Urut dari adegan 1 sampai akhir (disarankan)</option><option value="num">Cocokkan nomor di nama file</option></select></label><button class="g" style="margin-top:8px" onclick="ez()">Simpan ZIP gambar bernomor (gambar1, gambar2, ...)</button><div id="scenes"></div></section>
+
+<section id="s4" style="display:none"><h2><span>4</span>Voice over &amp; subtitle</h2>
+<p class="s" style="margin-bottom:6px">Naskah lengkap untuk Google AI Studio (TTS):</p>
+<textarea id="nar" readonly></textarea><button class="g" style="margin-top:6px" onclick="cp('nar')">Copy naskah</button><p class="s" style="margin:12px 0 6px"><b>Voice over per adegan (disarankan):</b> satu file audio per adegan, supaya durasi tiap gambar pas dengan narasinya. Pilih banyak file sekaligus atau satu ZIP, urut dari adegan 1 sampai akhir. Bisa juga upload per adegan di langkah 3.</p><input type="file" id="sbf" multiple accept="audio/*,.zip" onchange="sb(this.files)"> <button class="g" onclick="sx()">Hapus semua audio</button><small id="sbm" style="color:var(--mu)"></small><p class="s" style="margin:14px 0 6px">Atau satu file voice over untuk seluruh cerita (timing adegan diperkirakan dari jumlah kata):</p><input type="file" id="au" accept="audio/*,.wav,.mp3,.m4a" onchange="al(this.files[0])"><small id="am" style="color:var(--mu)"></small><details style="margin-top:10px"><summary style="cursor:pointer">Belum punya voice over? Pakai Edge TTS (gratis)</summary><p class="s" style="margin:8px 0">1) Install sekali: <code>pip install edge-tts</code><br>2) Copy naskah di atas, simpan sebagai <code>naskah.txt</code><br>3) Pilih suara, buat perintah, jalankan di terminal/CMD di folder yang sama<br>4) Upload <code>voiceover.mp3</code> di atas dan <code>voiceover.srt</code> di bawah</p><div class="row"><select id="ev"><option value="id-ID-ArdiNeural">Ardi (Indonesia, pria)</option><option value="id-ID-GadisNeural">Gadis (Indonesia, wanita)</option><option value="en-US-GuyNeural">Guy (English, pria)</option><option value="en-US-AriaNeural">Aria (English, wanita)</option></select><select id="er2"><option value="+0%">Kecepatan normal</option><option value="-10%">Lebih pelan</option><option value="+10%">Lebih cepat</option></select></div><button onclick="et2()">Generate suara per adegan (disarankan)</button> <button class="g" onclick="et()">Satu file untuk semua</button> <small id="em" style="color:var(--mu)"></small><p class="s" style="margin:8px 0 0">Atau manual lewat terminal:</p><button class="g" style="margin-top:6px" onclick="ec()">Buat perintah</button><textarea id="ecmd" readonly style="min-height:70px;margin-top:8px"></textarea><button class="g" style="margin-top:6px" onclick="cp('ecmd')">Copy perintah</button><p class="s" style="margin:12px 0 6px"><b>Per adegan (disarankan):</b> buat script yang menghasilkan adegan1.mp3, adegan2.mp3, dan seterusnya. Simpan sebagai <code>suara.py</code> (format UTF-8), jalankan <code>python suara.py</code>, lalu upload semua file mp3-nya di atas.</p><button onclick="ep()">Buat script per adegan</button><textarea id="epy" readonly style="min-height:120px;margin-top:8px"></textarea><button class="g" style="margin-top:6px" onclick="cp('epy')">Copy script</button></details><p class="s" style="margin:12px 0 6px">Opsional: upload subtitle (.srt/.vtt) dari Edge TTS biar timing pas dengan suara:</p><input type="file" id="sf" accept=".srt,.vtt" onchange="sl(this.files[0])"><small id="sm" style="color:var(--mu)"></small>
+<p class="s" style="margin:12px 0 6px">Subtitle SRT otomatis dari naskah, dipotong per adegan (durasi dari jumlah kata atau audio):</p>
+<div class="row"><label style="font-size:13px;color:var(--mu)">Kata per detik<input id="wps" type="number" step="0.1" value="2.5" oninput="srt()"></label><label style="font-size:13px;color:var(--mu)">Kata per subtitle (chunk)<input id="mw" type="number" min="1" max="30" value="8" oninput="srt()"></label></div>
+<button onclick="srt()">Perbarui SRT</button>
+<textarea id="sr" readonly style="margin-top:8px"></textarea><button class="g" style="margin-top:6px" onclick="cp('sr')">Copy SRT</button>
+<p class="s" style="margin-top:8px">Simpan hasil copy ke file .srt. Kalau durasi audio beda, ubah kata/detik lalu buat ulang.</p><h2 style="margin-top:18px"><span>5</span>Buat video</h2><p class="s" style="margin-bottom:6px">Gabung gambar (langkah 3) + voice over + subtitle. Dirender real-time, jadi biarkan tab ini terbuka sampai selesai. Jumlah kata yang tampil per subtitle diatur di kolom Kata per subtitle (langkah 4). Kalau tiap adegan sudah punya audio, lama tiap gambar mengikuti durasi audio adegannya.</p><style>.wb{width:36px;height:36px;padding:0;border-radius:8px;background:var(--soft);color:var(--ac);border:1px solid var(--bd);font-size:10px;margin:0}.wb.on{background:var(--ac);color:var(--on)}</style><h3 style="font-size:15px;margin:16px 0 4px">Watermark (opsional)</h3>
+<div class="grid"><label class="f">Teks<small>mis. @namakanal</small><input id="wt" placeholder="@namakanal" oninput="wpv()"></label><label class="f">Logo (gambar)<small>PNG transparan paling bagus</small><input type="file" id="wf" accept="image/*" onchange="wl(this.files[0])"></label></div>
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;align-items:flex-start">
+<div><div style="font-weight:600;font-size:13px;margin-bottom:6px">Posisi</div><div id="wg" style="display:grid;grid-template-columns:repeat(3,36px);gap:4px"></div><input type="hidden" id="wp" value="br"></div>
+<div style="flex:1;min-width:180px"><label class="f">Transparansi (opacity): <span id="wov">60</span>%<input id="wo" type="range" min="5" max="100" value="60" style="padding:0" oninput="$('wov').textContent=this.value;wpv()"></label><label class="f" style="margin-top:10px">Ukuran: <span id="wsv">5</span>%<input id="ws" type="range" min="2" max="15" value="5" style="padding:0" oninput="$('wsv').textContent=this.value;wpv()"></label></div>
+<div><div style="font-weight:600;font-size:13px;margin-bottom:6px">Preview</div><canvas id="wpvc" style="max-width:100%;border-radius:12px;border:1px solid var(--bd)"></canvas></div></div>
+<p class="s" style="margin:14px 0 8px">Format video: <b id="vf"></b> (diubah di langkah 1)</p><label class="f" style="max-width:280px">Kualitas<small>720p lebih cepat, 1080p lebih tajam</small><select id="vq"><option value="0.6667" selected>HD 720p (cepat)</option><option value="1">Full HD 1080p</option></select></label><button id="vb" onclick="mkv()">Generate video</button> <small id="vm" style="color:var(--mu)"></small><video id="vv" controls playsinline style="width:100%;margin-top:8px;display:none;border-radius:8px"></video><button class="g" id="vd" style="display:none;margin-top:8px" onclick="vdl()">Download video (.webm)</button></section>
+
+<script>
+var $=function(i){return document.getElementById(i)},D=null;
+function sv(){try{localStorage.setItem('se',JSON.stringify({t:$('title').value,j:$('js').value}))}catch(e){}}
+try{var o=JSON.parse(localStorage.getItem('se')||'{}');$('title').value=o.t||'';$('js').value=o.j||''}catch(e){}
+function cp(id){var t=$(id);t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}}
+function mk1(){
+var t=$('title').value.trim();if(!t)return;sv();
+var en=$('lang').value==='en',th=THM[$('theme').selectedIndex]||THM[0],n=$('n').value,st=$('style').value;
+var profile=CONTENT[$('mode').value]||CONTENT.explainer;
+var extra=profile.prompt;
+if($('mode').value==='news'){
+  extra += '\n\nNEWS SOURCE / RAW CONTEXT:\n'+($('newsSource').value.trim()||'[No source text supplied. Use only information explicitly provided in the topic and clearly label uncertain details.]');
+}
+var common=en
+?'Write a short '+profile.kind+' titled "'+t+'" in English, divided into '+n+' scenes.'
+:'Buat konten '+profile.kind+' berjudul "'+t+'" dalam Bahasa Indonesia, dibagi menjadi '+n+' adegan.';
+var tone=en?'Tone: '+th[4]+'.':'Nada cerita: '+th[4]+'.';
+var visual='Visual style: '+(st||profile.visual)+'.';
+var json=en
+?'Reply ONLY with valid JSON (no other text, no markdown) in this format:\n{"title":"","style":"","characters":[{"name":"","look":"consistent physical description and clothing, in English"}],"scenes":[{"no":1,"narration":"voice-over text in English (2-3 sentences)","visual":"image description in English: location, action, expression, camera angle","characters":["names of characters in this scene"],"mood":""}]}'
+:'Balas HANYA dengan JSON valid (tanpa teks lain, tanpa markdown) dengan format:\n{"title":"","style":"","characters":[{"name":"","look":"deskripsi fisik & pakaian yang konsisten, dalam bahasa Inggris"}],"scenes":[{"no":1,"narration":"teks narasi voice over dalam Bahasa Indonesia (2-3 kalimat)","visual":"deskripsi gambar adegan dalam bahasa Inggris: lokasi, aksi, ekspresi, sudut kamera","characters":["nama karakter di adegan ini"],"mood":""}]}';
+var ending=en
+?'Make the opening immediately engaging, maintain continuity across scenes, and end with a memorable payoff.':'Buat opening yang langsung menarik, jaga konsistensi antaradegan, dan akhiri dengan payoff yang kuat.';
+$('p1').value=common+'\n'+tone+'\n'+visual+'\n\nCONTENT DNA:\n'+extra+'\n\n'+json+'\n'+ending;
+$('p1').style.display=$('c1').style.display='block';
+}
+
+function gen(){$('er').textContent='';sv();var d;try{d=JSON.parse($('js').value.replace(/^```json|```$/g,'').trim())}catch(e){$('er').textContent='JSON tidak valid: '+e.message;return}
+if(!d.scenes||!d.scenes.length){$('er').textContent='Tidak ada "scenes".';return}D=d;SA=[];SD=[];SCU=[];IB=[];
+var ch={};(d.characters||[]).forEach(function(c){ch[c.name]=c.look});var h='';
+d.scenes.forEach(function(s,i){var who=(s.characters||[]).map(function(n){return n+' ('+(ch[n]||'')+')'}).join('; ');
+var p='File name: gambar'+(s.no||i+1)+'. '+($('style').value||d.style)+'. '+s.visual+(who?' Characters: '+who+'.':'')+(s.mood?' Mood: '+s.mood+'.':'')+' '+AR()+', no text, no watermark.';
+h+='<div class="sc"><b>Adegan '+(s.no||i+1)+'</b><textarea id="f'+i+'" readonly style="min-height:80px;margin-top:6px">'+p.replace(/</g,'&lt;')+'</textarea><div class="row" style="margin-top:6px"><button class="g" onclick="cp(\'f'+i+'\')">Copy prompt</button><input type="file" accept="image/*" onchange="im(this,'+i+')"></div><div class="s" style="margin:10px 0 4px"><b>Narasi:</b> '+String(s.narration).replace(/</g,'&lt;')+'</div><div class="row"><button class="g" onclick="cn('+i+')">Copy narasi</button><input type="file" accept="audio/*" onchange="sa(this.files[0],'+i+')"></div><small id="as'+i+'" style="color:var(--mu)"></small><img id="i'+i+'" style="display:none"></div>'});
+$('scenes').innerHTML=h;$('all').value=d.scenes.map(function(s,i){return '[gambar'+(s.no||i+1)+']\n'+$('f'+i).value}).join('\n\n');$('s3').style.display=$('s4').style.display='block';
+$('nar').value=d.scenes.map(function(s){return s.narration}).join('\n\n');srt()}
+var dz=$('dz');dz.ondragover=function(e){e.preventDefault()};dz.ondrop=function(e){e.preventDefault();fl(e.dataTransfer.files)};
+function put(i,x){var m=$('i'+i);m.src=URL.createObjectURL(x.b);m.style.display='block';IB[i]=x;if(!$('n'+i))m.insertAdjacentHTML('afterend','<div class="s" id="n'+i+'"></div>');$('n'+i).textContent=x.n;wpv()}
+function fl(fs){var zm=$('zm');if(!D||typeof JSZip==='undefined'){zm.textContent=!D?'Generate dulu (langkah 2).':'JSZip gagal dimuat, coba refresh.';return}
+var jobs=[];Array.from(fs).forEach(function(f){if(/\.zip$/i.test(f.name)){jobs.push(JSZip.loadAsync(f).then(function(z){var ps=[];z.forEach(function(p,e){if(!e.dir&&/\.(png|jpe?g|webp)$/i.test(p)&&p.indexOf('__MACOSX')<0)ps.push(e.async('blob').then(function(b){return{n:p.split('/').pop(),b:b}}))});return Promise.all(ps)}))}else if(/^image\//.test(f.type))jobs.push([{n:f.name,b:f}])});
+Promise.all(jobs).then(function(r){var L=[].concat.apply([],r);if(!L.length){zm.textContent='Tidak ada gambar ditemukan.';return}
+L.sort(function(a,b){return a.n.localeCompare(b.n,undefined,{numeric:true})});
+var nums=L.map(function(x){var m=x.n.replace(/\.\w+$/,'').match(/(\d+)(?!.*\d)/);return m?+m[1]:null});
+var idx=nums.map(function(n){return D.scenes.findIndex(function(s,i){return n!==null&&(s.no||i+1)==n})});
+var by=$('zmode').value==='num'&&idx.every(function(i){return i>=0})&&new Set(idx).size===L.length;
+if(by)L.forEach(function(x,k){put(idx[k],x)});else L.forEach(function(x,k){if(k<D.scenes.length)put(k,x)});
+zm.textContent=L.length+' gambar masuk ('+(by?'dicocokkan dari nomor di nama file':'diurutkan berdasarkan nama file')+')'+(L.length!==D.scenes.length?' — jumlahnya beda dengan '+D.scenes.length+' adegan, cek lagi.':'.')}).catch(function(e){zm.textContent='Gagal baca file: '+e.message})}
+
+var CONTENT={
+explainer:{
+ title:'Explainer',chip:'EXPLAINER',desc:'Jelaskan sesuatu dengan visual AI yang mudah dipahami.',kind:'explainer / educational visual story',
+ visual:'cinematic educational visualization, semi-realistic 3D illustration, clean composition, dramatic but informative lighting',
+ prompt:`Explain one interesting concept in a simple and visually understandable way.
+STRUCTURE: hook -> mystery/problem -> mechanism -> relatable example -> surprising conclusion -> takeaway.
+STYLE RULE: every scene must visually represent what the narration explains.
+Avoid random stock-like shots, unrelated characters, and generic cinematic filler.
+Use analogies when useful. Keep the explanation factual and accessible.`,
+ theme:'Dokumenter / kisah nyata'
+},
+news:{
+ title:'News',chip:'NEWS',desc:'Berita aktual yang divisualisasikan dengan AI, bukan diposisikan sebagai rekaman asli.',kind:'news report / visual reconstruction',
+ visual:'cinematic documentary news visualization, realistic environment, natural light, professional editorial composition, subtle camera movement',
+ prompt:`Create a factual news-style narrative from the supplied topic and source context.
+STRUCTURE: factual hook -> what happened -> who/what is involved -> timeline -> why it matters -> implications -> concise closing.
+FACT RULE: separate confirmed facts from uncertainty. Do not invent quotes, people, statistics, locations, dates, or events. If the supplied source is insufficient, say what is unknown instead of fabricating it.
+VISUAL RULE: AI visuals are illustrative reconstructions, never presented as authentic footage. Use documentary-style visualizations that clearly support the narration.`,
+ theme:'Dokumenter / kisah nyata'
+},
+drama:{
+ title:'Drama AI',chip:'DRAMA AI',desc:'Drama sinematik dengan karakter dan dunia yang konsisten.',kind:'cinematic AI drama',
+ visual:'cinematic live-action drama, photorealistic film still, shallow depth of field, emotional lighting, 35mm film look',
+ prompt:`Build a cinematic emotional drama with a strong character-driven conflict.
+STRUCTURE: immediate emotional hook -> protagonist -> relationship/conflict -> escalation -> hidden information -> emotional climax -> twist or payoff.
+CHARACTER BIBLE: recurring characters must keep the same face, age, hairstyle, body proportions, clothing logic, personality, and identity in every scene.
+CAMERA LANGUAGE: close-ups, medium shots, over-the-shoulder shots, establishing shots, controlled cinematic movement.
+Do not randomly change character appearance, location, era, or visual language.`,
+ theme:'Sinematik / film'
+},
+horror:{
+ title:'Horror AI',chip:'HORROR AI',desc:'Horor sinematik yang membangun rasa takut lewat atmosfer dan misteri.',kind:'psychological cinematic horror story',
+ visual:'dark cinematic psychological horror, realistic environment, low-key lighting, deep shadows, fog, muted tones, eerie film still',
+ prompt:`Create psychological horror that builds tension instead of relying on constant jump scares.
+STRUCTURE: normal situation -> strange detail -> suspicion -> unexplained event -> escalation -> disturbing reveal -> lingering ending.
+HORROR LANGUAGE: silence, anticipation, isolation, environmental details, subtle movement, unreliable perception.
+CAMERA: slow controlled movement, static frames, POV shots, close-ups, claustrophobic compositions.
+Keep recurring characters and locations visually consistent. Avoid random monsters or unrelated horror imagery.`,
+ theme:'Horor / creepy'
+},
+psychology:{
+ title:'Psychology',chip:'PSYCHOLOGY',desc:'Menjelaskan perilaku dan pikiran manusia dengan action/motion visual.',kind:'psychology visualization',
+ visual:'minimal cinematic motion design, anonymous human silhouettes, symbolic objects, smooth movement, clean dark neutral background, soft cinematic lighting',
+ prompt:`Explain one psychological concept through visual metaphors and controlled motion.
+STRUCTURE: relatable situation -> psychological mechanism -> example -> why it happens -> practical takeaway.
+VISUAL LANGUAGE: anonymous human figures, silhouettes, symbolic objects, simple environments, visual metaphors for memory, attention, fear, attachment, social pressure, decision-making, and emotion.
+MOTION RULE: every visual movement must represent an idea from the narration. Avoid literal stock footage and random cinematic shots.
+Keep the visual system minimal, consistent, and recognizable from scene to scene.`,
+ theme:'Whiteboard / doodle'
+},
+history:{
+ title:'History Stickman',chip:'HISTORY STICKMAN',desc:'Sejarah dengan dunia 2D stickman yang konsisten dan mudah diikuti.',kind:'stickman historical storytelling',
+ visual:'stylized 2D stickman historical animation, clean hand-drawn lines, minimal environments, clear historical symbols, flat illustrative composition',
+ prompt:`Explain a historical event as a fast, clear stickman story.
+STRUCTURE: hook -> historical context -> trigger event -> major developments -> turning point -> outcome -> historical significance.
+CHARACTER RULE: every human is a simple stickman. Recurring figures keep the same clothing symbols, accessories, proportions, and visual identity.
+WORLD RULE: use maps, flags, buildings, vehicles, documents, weapons, and symbolic objects to communicate history.
+TONE: educational, energetic, lightly humorous when appropriate, but respectful.
+Do not introduce photorealistic people or switch to another art style.`,
+ theme:'Sejarah klasik'
+}
+};
+var MODE_KEY='explainer';
+function setMode(k){
+  MODE_KEY=k; $('mode').value=k;
+  var p=CONTENT[k]||CONTENT.explainer;
+  document.querySelectorAll('.nav button').forEach(function(b){b.classList.toggle('active',b.dataset.mode===k)});
+  $('modeTitle').textContent=p.title;
+  $('modeChip').textContent=p.chip;
+  $('modeDesc').textContent=p.desc;
+  $('newsContext').style.display=k==='news'?'block':'none';
+  var ti=Array.prototype.findIndex.call($('theme').options,function(o){return o.textContent===p.theme});
+  if(ti>=0){$('theme').selectedIndex=ti;tm()}
+  try{localStorage.setItem('se_mode',k)}catch(e){}
+  if($('p1').style.display==='block')mk1();
+}
+var THM=[
+['cin','Sinematik drama','Film realistis, cahaya hangat, emosional','cinematic realistic film still, warm golden lighting, shallow depth of field, 35mm look','emotional heartfelt drama with a strong twist'],
+['hor','Horor / creepy','Gelap, mencekam, penuh misteri','dark horror atmosphere, desaturated cold tones, fog, deep shadows, eerie cinematic','suspenseful and chilling, slow-building dread, shocking ending'],
+['mot','Motivasi / inspiratif','Perjuangan hidup, penuh harapan','inspirational cinematic photography, golden hour light, hopeful mood, wide shots','uplifting and inspiring, struggle to success arc'],
+['ani','Anime','Ilustrasi gaya animasi Jepang','anime style illustration, vibrant colors, clean line art, expressive faces, soft cel shading','dramatic and emotional'],
+['3d','Animasi 3D (ala Pixar)','Karakter 3D lucu dan cerah','3D animated movie style, soft lighting, expressive rounded characters, vibrant colors','heartwarming and fun'],
+['com','Komik / webtoon','Garis tegas, warna datar pekat','comic book webtoon illustration, bold ink outlines, flat vivid colors, halftone shading','punchy with dramatic reveals'],
+['sto','Dongeng / storybook','Cat air lembut ala buku anak','soft watercolor storybook illustration for kids, pastel palette, gentle textures','gentle fairy tale with a moral lesson'],
+['fan','Fantasi epik','Dunia magis, petualangan besar','epic fantasy concept art, dramatic lighting, rich detail, painterly','epic adventure with high stakes'],
+['cyb','Cyberpunk / futuristik','Neon, kota masa depan','cyberpunk neon city, futuristic sci-fi, glowing lights, rainy streets, cinematic','tense and high-stakes'],
+['doo','Whiteboard / doodle','Coretan spidol sederhana','hand-drawn whiteboard doodle illustration, simple black marker lines on white background, minimal color','clear, simple and easy to follow'],
+['ret','Retro / vintage','Foto jadul, penuh nostalgia','vintage retro film photograph, grainy texture, faded colors, 1980s nostalgia','nostalgic and warm'],
+['doc','Dokumenter / kisah nyata','Realistis ala berita, natural','realistic documentary photography, natural light, candid handheld look','factual and grounded, true-story feel'],
+['his','Sejarah klasik','Lukisan minyak, adegan zaman dulu','classical oil painting style, historical scene, dramatic chiaroscuro lighting','dramatic historical storytelling'],
+['custom','Tulis sendiri','Isi gaya visual sesuai keinginan lu','','engaging and emotional']];
+var FM={tt:{n:'TikTok',w:1080,h:1920,ar:'vertical 9:16',sb:440,d:'Vertikal 9:16, 1080x1920. Subtitle dinaikkan dari area tombol TikTok.'},
+ig:{n:'Instagram Reels',w:1080,h:1920,ar:'vertical 9:16',sb:400,d:'Vertikal 9:16, 1080x1920. Subtitle dinaikkan dari area caption.'},
+fb:{n:'Facebook Reels',w:1080,h:1920,ar:'vertical 9:16',sb:360,d:'Vertikal 9:16, 1080x1920. Subtitle dinaikkan dari area tombol.'},
+yt:{n:'YouTube Shorts',w:1080,h:1920,ar:'vertical 9:16',sb:380,d:'Vertikal 9:16, 1080x1920. Subtitle dinaikkan dari area judul.'},
+yl:{n:'YouTube landscape',w:1920,h:1080,ar:'horizontal 16:9',sb:90,d:'Horizontal 16:9, 1920x1080, untuk video YouTube biasa.'},
+sq:{n:'Persegi 1:1',w:1080,h:1080,ar:'square 1:1',sb:100,d:'Persegi 1:1, 1080x1080, untuk feed.'}};
+function AR(){return FM[$('fmt').value].ar+' aspect ratio'}
+function tm(){var t=THM[$('theme').selectedIndex]||THM[0];$('thd').textContent=t[2];var c=t[0]==='custom';$('style').style.display=c?'block':'none';if(!c)$('style').value=t[3]}
+function up(){if(!D)return;D.scenes.forEach(function(s,i){var t=$('f'+i);if(t)t.value=t.value.replace(/ (vertical 9:16|horizontal 16:9|square 1:1) aspect ratio, no text/,' '+AR()+', no text')});$('all').value=D.scenes.map(function(s,i){return '[gambar'+(s.no||i+1)+']\n'+$('f'+i).value}).join('\n\n')}
+function fm(){var f=FM[$('fmt').value];$('fmd').textContent=f.d;$('vf').textContent=f.n+' ('+f.w+'x'+f.h+')';up();wpv()}
+function rf(){tm();$('ev').value=$('lang').value==='en'?'en-US-GuyNeural':'id-ID-ArdiNeural';if($('p1').style.display==='block')mk1()}
+$('theme').innerHTML=THM.map(function(t){return '<option>'+t[1]+'</option>'}).join('');tm();fm();
+var WI=null,IB=[];
+var WPN={tl:'Kiri atas',tc:'Tengah atas',tr:'Kanan atas',ml:'Kiri tengah',mc:'Tengah',mr:'Kanan tengah',bl:'Kiri bawah',bc:'Tengah bawah',br:'Kanan bawah'};
+function wgb(){var h='';Object.keys(WPN).forEach(function(k){h+='<button class="wb'+($('wp').value===k?' on':'')+'" title="'+WPN[k]+'" aria-label="'+WPN[k]+'" onclick="wsp(\''+k+'\')">&#9679;</button>'});$('wg').innerHTML=h}
+function wsp(k){$('wp').value=k;wgb();wpv()}
+function wl(f){if(!f){WI=null;wpv();return}var i=new Image();i.onload=function(){WI=i;wpv()};i.src=URL.createObjectURL(f)}
+function drawWM(c,W,H){var t=$('wt').value.trim();if(!t&&!WI)return;var pos=$('wp').value,ax=pos[1]==='l'?0:pos[1]==='c'?0.5:1,ay=pos[0]==='t'?0:pos[0]==='m'?0.5:1,m=Math.min(W,H),fs=$('ws').value/100*m,pad=m*0.04,ih=fs*1.4,iw=WI?WI.naturalWidth/WI.naturalHeight*ih:0;c.save();c.globalAlpha=$('wo').value/100;c.font='700 '+fs+'px "Plus Jakarta Sans",system-ui,sans-serif';var tw=t?c.measureText(t).width:0,gp=(WI&&t)?fs*0.4:0,bw=iw+gp+tw,bh=Math.max(WI?ih:0,t?fs:0),x0=pad+ax*(W-2*pad-bw),y0=pad+ay*(H-2*pad-bh);if(WI)c.drawImage(WI,x0,y0+(bh-ih)/2,iw,ih);if(t){c.textAlign='left';c.textBaseline='middle';c.lineJoin='round';c.lineWidth=fs*0.14;c.strokeStyle='rgba(0,0,0,0.6)';c.fillStyle='#fff';c.strokeText(t,x0+iw+gp,y0+bh/2);c.fillText(t,x0+iw+gp,y0+bh/2)}c.restore()}
+function wpv(){var cv=$('wpvc');if(!cv)return;var F=FM[$('fmt').value],k=420/Math.max(F.w,F.h),W=Math.round(F.w*k),H=Math.round(F.h*k),c=cv.getContext('2d');cv.width=W;cv.height=H;c.fillStyle='#2b2f38';c.fillRect(0,0,W,H);var m=D?$('i0'):null;if(m&&m.style.display!=='none'&&m.naturalWidth){var s=Math.max(W/m.naturalWidth,H/m.naturalHeight),w=m.naturalWidth*s,h=m.naturalHeight*s;c.drawImage(m,(W-w)/2,(H-h)/2,w,h)}var fs=Math.round(Math.min(W,H)*0.06);c.font='800 '+fs+'px "Plus Jakarta Sans",system-ui,sans-serif';c.textAlign='center';c.textBaseline='bottom';c.lineWidth=fs*0.2;c.lineJoin='round';c.strokeStyle='#000';c.fillStyle='#fff';var y=H-F.sb*k;c.strokeText('Contoh subtitle',W/2,y);c.fillText('Contoh subtitle',W/2,y);drawWM(c,W,H)}
+async function dl(b,n,m){var d=null;try{d=window.claude?await claude.use('downloads'):null}catch(e){}if(!d){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();a.remove();return}try{await d.save({filename:n,data:b})}catch(e){if(e.code!=='declined')m.textContent='Gagal simpan: '+(e.message||e.code)}}
+function ez(){var m=$('zm'),z=new JSZip(),n=0;IB.forEach(function(x,i){if(!x)return;var e=(x.n.match(/\.(png|jpe?g|webp)$/i)||['.png'])[0].toLowerCase();z.file('gambar'+(i+1)+e,x.b);n++});if(!n){m.textContent='Belum ada gambar.';return}z.generateAsync({type:'blob'}).then(function(b){dl(b,'gambar-bernomor.zip',m)})}
+function jmd(){$('jauto').style.display=$('jm').value==='auto'?'block':'none'}
+wgb();wpv();try{setMode(localStorage.getItem('se_mode')||'explainer')}catch(e){setMode('explainer')}
+var SA=[],SD=[],SCU=[];
+function ps(){return !!D&&D.scenes.every(function(s,i){return SA[i]})}
+function psTL(mx){var sc=[],ch=[],t=0,N=D.scenes.length;D.scenes.forEach(function(s,i){var w=String(s.narration).split(/\s+/).filter(Boolean),d=SD[i]+(i==N-1?0.6:0.35);sc.push({s:t,e:t+d});var cs=SCU[i]?rc(SCU[i],mx):[];if(!cs.length){for(var a=0;a<w.length;a+=mx){var c=w.slice(a,a+mx);cs.push({s:SD[i]*a/w.length,e:SD[i]*(a+c.length)/w.length,t:c.join(' ')})}}cs.forEach(function(x){ch.push({s:t+x.s,e:t+x.e,t:x.t})});t+=d});return{sc:sc,ch:ch,T:t}}
+function setSA(i,f,name){return new Promise(function(res){var a=new Audio();a.preload='metadata';a.src=URL.createObjectURL(f);a.onloadedmetadata=function(){SA[i]=f;SD[i]=a.duration;SCU[i]=null;var e=$('as'+i);if(e)e.textContent='Audio: '+name+' ('+a.duration.toFixed(1)+' detik)';res()};a.onerror=function(){var e=$('as'+i);if(e)e.textContent='Audio tidak bisa dibaca: '+name;res()}})}
+function sa(f,i){if(!f)return;setSA(i,f,f.name).then(sm)}
+function sm(){if(!D)return;var n=0,t=0;D.scenes.forEach(function(s,i){if(SA[i]){n++;t+=SD[i]}});$('sbm').textContent=' '+n+'/'+D.scenes.length+' adegan punya audio'+(n?' ('+t.toFixed(1)+' detik)':'')+(n===D.scenes.length?'. Video akan pas per adegan.':'');srt()}
+function sx(){SA=[];SD=[];SCU=[];if(D)D.scenes.forEach(function(s,i){var e=$('as'+i);if(e)e.textContent=''});sm()}
+function sb(fs){if(!D){$('sbm').textContent=' Generate dulu (langkah 2).';return}var jobs=[];Array.from(fs).forEach(function(f){if(/\.zip$/i.test(f.name)){jobs.push(JSZip.loadAsync(f).then(function(z){var ps=[];z.forEach(function(p,e){if(!e.dir&&/\.(mp3|wav|m4a|ogg|aac|webm)$/i.test(p)&&p.indexOf('__MACOSX')<0)ps.push(e.async('blob').then(function(b){return{n:p.split('/').pop(),b:b}}))});return Promise.all(ps)}))}else jobs.push([{n:f.name,b:f}])});Promise.all(jobs).then(function(r){var L=[].concat.apply([],r);L.sort(function(a,b){return a.n.localeCompare(b.n,undefined,{numeric:true})});return Promise.all(L.slice(0,D.scenes.length).map(function(x,k){return setSA(k,x.b,x.n)})).then(function(){sm();if(L.length!==D.scenes.length)$('sbm').textContent+=' (jumlah file '+L.length+' beda dengan '+D.scenes.length+' adegan, cek lagi)'})}).catch(function(e){$('sbm').textContent=' Gagal baca file: '+e.message})}
+function cn(i){var t=document.createElement('textarea');t.value=D.scenes[i].narration;document.body.appendChild(t);t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}t.remove()}
+function ep(){if(!D){$('epy').value='Generate dulu (langkah 2).';return}$('epy').value='import asyncio, edge_tts\n\nS = '+JSON.stringify(D.scenes.map(function(s){return String(s.narration)}))+'\nVOICE = "'+$('ev').value+'"\nRATE = "'+$('er2').value+'"\n\nasync def main():\n    for i, t in enumerate(S, 1):\n        await edge_tts.Communicate(t, VOICE, rate=RATE).save(f"adegan{i}.mp3")\n        print("selesai adegan", i)\n\nasyncio.run(main())\n'}
+function pc(tx){var o=[];tx.replace(/\r/g,'').split(/\n\n+/).forEach(function(b){var L=b.split('\n'),i=L.findIndex(function(l){return l.indexOf('-->')>=0});if(i<0)return;var p=L[i].split('-->');o.push({s:tp(p[0]),e:tp(p[1].trim().split(' ')[0]),t:L.slice(i+1).join(' ').replace(/<[^>]+>/g,'').trim()})});return o.filter(function(c){return c.t&&!isNaN(c.s)&&!isNaN(c.e)})}
+var CU=null;
+function rc(cs,mx){var o=[];cs.forEach(function(c){var w=c.t.split(/\s+/).filter(Boolean),d=c.e-c.s;for(var a=0;a<w.length;a+=mx){var p=w.slice(a,a+mx);o.push({s:c.s+d*a/w.length,e:c.s+d*(a+p.length)/w.length,t:p.join(' ')})}});return o}
+function oa(){var m=$('oam'),t=$('title').value.trim();if(!t){m.textContent='Isi judul di langkah 1 dulu.';return}mk1();var key=$('ok').value.trim();try{localStorage.setItem('se_k',key)}catch(e){}m.textContent='Meminta cerita ke OpenAI...';fetch('/openai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,model:$('om').value.trim(),prompt:$('p1').value})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);$('js').value=j.text;gen();m.textContent=$('er').textContent?'':'Selesai, prompt Flow sudah dibuat di langkah 3.'}).catch(function(e){m.textContent='Gagal: '+e.message})}
+try{$('ok').value=localStorage.getItem('se_k')||''}catch(e){}
+function et(){var m=$('em');if(!D){m.textContent='Generate dulu (langkah 2).';return}m.textContent='Membuat suara...';fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:$('nar').value,voice:$('ev').value,rate:$('er2').value})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);var b=atob(j.audio),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);SA=[];SD=[];SCU=[];al(new File([u],'voiceover.mp3',{type:'audio/mpeg'}));sl(new File([j.srt],'voiceover.srt'));m.textContent='Selesai, suara & subtitle sudah dimuat.'}).catch(function(e){m.textContent='Gagal: '+e.message+' (cek server lokal masih jalan)'})}
+function et2(){var m=$('em');if(!D){m.textContent='Generate dulu (langkah 2).';return}var i=0,N=D.scenes.length;function nx(){if(i>=N){m.textContent='Selesai, suara '+N+' adegan sudah dimuat.';sm();return}m.textContent='Membuat suara adegan '+(i+1)+' dari '+N+'...';var idx=i;fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:String(D.scenes[idx].narration),voice:$('ev').value,rate:$('er2').value})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);var b=atob(j.audio),u=new Uint8Array(b.length);for(var k=0;k<b.length;k++)u[k]=b.charCodeAt(k);return setSA(idx,new File([u],'adegan'+(idx+1)+'.mp3',{type:'audio/mpeg'}),'adegan'+(idx+1)+'.mp3').then(function(){SCU[idx]=pc(j.srt);i++;nx()})}).catch(function(e){m.textContent='Gagal: '+e.message+' (cek server lokal masih jalan)'})}nx()}
+function ec(){$('ecmd').value='edge-tts --voice '+$('ev').value+' --rate='+$('er2').value+' --file naskah.txt --write-media voiceover.mp3 --write-subtitles voiceover.srt'}
+function tp(x){var m=x.trim().replace(',','.').split(':').map(parseFloat);return m.length==3?m[0]*3600+m[1]*60+m[2]:m[0]*60+m[1]}
+function sl(f){if(!f)return;f.text().then(function(tx){var o=[];tx.replace(/\r/g,'').split(/\n\n+/).forEach(function(b){var L=b.split('\n'),i=L.findIndex(function(l){return l.indexOf('-->')>=0});if(i<0)return;var p=L[i].split('-->');o.push({s:tp(p[0]),e:tp(p[1].trim().split(' ')[0]),t:L.slice(i+1).join(' ').replace(/<[^>]+>/g,'').trim()})});o=o.filter(function(c){return c.t&&!isNaN(c.s)&&!isNaN(c.e)});CU=o.length?o:null;$('sm').textContent=o.length?' '+o.length+' baris subtitle dimuat.':' Format tidak dikenali.';srt()})}
+var AU=null,AD=0,VB=null;
+function al(f){if(!f)return;var a=new Audio();a.preload='metadata';a.src=URL.createObjectURL(f);a.onloadedmetadata=function(){AU=f;AD=a.duration;var n=D?D.scenes.reduce(function(s,x){return s+String(x.narration).split(/\s+/).filter(Boolean).length},0):0;if(n)$('wps').value=(n/AD).toFixed(3);$('am').textContent=' '+f.name+' ('+AD.toFixed(1)+' detik)'+(n?' - subtitle disesuaikan ke durasi audio (SRT diperbarui otomatis).':'');srt()};a.onerror=function(){$('am').textContent=' Audio tidak bisa dibaca.'}}
+function wrap(c,t,w){var ws=t.split(' '),l='',o=[];ws.forEach(function(x){var n=l?l+' '+x:x;if(c.measureText(n).width>w&&l){o.push(l);l=x}else l=n});if(l)o.push(l);return o}
+function mkv(){var vm=$('vm');if(!D){vm.textContent='Generate dulu (langkah 2).';return}
+var N=D.scenes.length,imgs=[];for(var i=0;i<N;i++){var m=$('i'+i);if(!m||m.style.display==='none'){vm.textContent='Adegan '+(i+1)+' belum ada gambar.';return}imgs.push(m)}
+var mx=parseInt($('mw').value)||8,words=D.scenes.map(function(s){return String(s.narration).split(/\s+/).filter(Boolean)});
+var tw=words.reduce(function(a,w){return a+w.length},0)||1,T=AU?AD:tw/(parseFloat($('wps').value)||2.5),sc=[],ch=[],t=0;
+words.forEach(function(w,i){var d=w.length/tw*T;sc.push({s:t,e:t+d});var q=t;for(var a=0;a<w.length;a+=mx){var c=w.slice(a,a+mx),cd=c.length/w.length*d;ch.push({s:q,e:q+cd,t:c.join(' ')});q+=cd}t+=d});
+if(CU){ch=rc(CU,mx);var cw=CU.map(function(c){return c.t.split(/\s+/).length}),ct=cw.reduce(function(a,b){return a+b},0),cum=0,j=0,pv=0,aw=0;if(!AU)T=CU[CU.length-1].e;sc=[];words.forEach(function(w,i){aw+=w.length;var tg=aw/tw*ct;while(j<CU.length&&cum<tg-0.01){cum+=cw[j];j++}var e=i==N-1?T:Math.min(T,CU[Math.max(j-1,0)].e);sc.push({s:pv,e:e});pv=e})}
+var PS=ps();if(PS){var R=psTL(mx);sc=R.sc;ch=R.ch;T=R.T}
+var cv=document.createElement('canvas');var F=FM[$('fmt').value],q=parseFloat($('vq').value)||1,W=Math.round(F.w*q),H=Math.round(F.h*q);cv.width=W;cv.height=H;var c=cv.getContext('2d'),st=cv.captureStream(30),au=null,ac=null,clock0=0,fin=false;
+if(AU&&!PS){au=new Audio(URL.createObjectURL(AU));ac=new (window.AudioContext||window.webkitAudioContext)();var src=ac.createMediaElementSource(au),dst=ac.createMediaStreamDestination();src.connect(dst);dst.stream.getAudioTracks().forEach(function(k){st.addTrack(k)})}
+var dst2=null;if(PS){ac=new (window.AudioContext||window.webkitAudioContext)();dst2=ac.createMediaStreamDestination();dst2.stream.getAudioTracks().forEach(function(k){st.addTrack(k)})}
+var mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].filter(function(x){return window.MediaRecorder&&MediaRecorder.isTypeSupported(x)})[0];
+if(!mt){vm.textContent='Browser ini tidak mendukung perekaman video.';return}
+var rec=new MediaRecorder(st,{mimeType:mt,videoBitsPerSecond:q>=1?8000000:5000000}),parts=[];
+rec.ondataavailable=function(e){if(e.data.size)parts.push(e.data)};
+rec.onstop=function(){VB=new Blob(parts,{type:'video/webm'});var v=$('vv');v.src=URL.createObjectURL(VB);v.style.display='block';$('vd').style.display='inline-block';$('vb').disabled=false;vm.textContent='Selesai ('+T.toFixed(1)+' detik).'};
+function draw(){var now=au?au.currentTime:(performance.now()-clock0)/1000;
+if(now>=T||(au&&au.ended)){if(!fin){fin=true;setTimeout(function(){rec.stop();if(ac)ac.close()},300)}return}
+var k=0;while(k<N-1&&now>=sc[k].e)k++;
+var im=imgs[k],p=Math.min(1,Math.max(0,(now-sc[k].s)/((sc[k].e-sc[k].s)||1))),z=1+0.08*(k%2?1-p:p),iw=im.naturalWidth,ih=im.naturalHeight,s=Math.max(W/iw,H/ih)*z,w=iw*s,h=ih*s;
+c.fillStyle='#000';c.fillRect(0,0,W,H);c.drawImage(im,(W-w)/2,(H-h)/2,w,h);drawWM(c,W,H);
+var cc=ch.find(function(x){return now>=x.s&&now<x.e});
+if(cc){var fs=Math.round(Math.min(W,H)*0.06);c.font='800 '+fs+'px "Plus Jakarta Sans",system-ui,sans-serif';c.textAlign='center';c.textBaseline='bottom';c.lineWidth=fs*0.2;c.lineJoin='round';var ls=wrap(c,cc.t,W*0.86);ls.forEach(function(l,j){var y=H-F.sb*q-(ls.length-1-j)*fs*1.25;c.strokeStyle='#000';c.strokeText(l,W/2,y);c.fillStyle='#fff';c.fillText(l,W/2,y)})}
+vm.textContent='Merender... '+Math.round(now/T*100)+'%';requestAnimationFrame(draw)}
+$('vb').disabled=true;$('vv').style.display='none';$('vd').style.display='none';rec.start(1000);
+if(PS){vm.textContent='Menyiapkan audio...';Promise.all(D.scenes.map(function(s,i){return SA[i].arrayBuffer().then(function(b){return ac.decodeAudioData(b)})})).then(function(bf){ac.resume();var t0=ac.currentTime+0.2;bf.forEach(function(b,i){var so=ac.createBufferSource();so.buffer=b;so.connect(dst2);so.start(t0+sc[i].s)});clock0=performance.now()+200;draw()}).catch(function(e){vm.textContent='Audio gagal dibaca: '+e.message;rec.stop()})}else if(au){ac.resume();au.play().then(draw).catch(function(e){vm.textContent='Audio gagal diputar: '+e.message;rec.stop()})}else{clock0=performance.now();draw()}}
+async function vdl(){if(!VB)return;var d=null;try{d=window.claude?await claude.use('downloads'):null}catch(e){}
+if(!d){var a=document.createElement('a');a.href=URL.createObjectURL(VB);a.download='video-'+$('fmt').value+'.webm';document.body.appendChild(a);a.click();a.remove();return}
+try{await d.save({filename:'video-'+$('fmt').value+'.webm',data:VB})}catch(e){if(e.code!=='declined')$('vm').textContent='Gagal simpan: '+(e.message||e.code)}}
+function im(el,i){var f=el.files[0];if(!f)return;var m=$('i'+i);m.src=URL.createObjectURL(f);m.style.display='block';IB[i]={n:f.name,b:f};wpv()}
+function ts(t){var h=Math.floor(t/3600),m=Math.floor(t%3600/60),s=Math.floor(t%60),ms=Math.round((t%1)*1000),z=function(n,l){return String(n).padStart(l||2,'0')};return z(h)+':'+z(m)+':'+z(s)+','+z(ms,3)}
+function srt(){if(ps()){$('sr').value=psTL(parseInt($('mw').value)||8).ch.map(function(c,i){return (i+1)+'\n'+ts(c.s)+' --> '+ts(c.e)+'\n'+c.t+'\n'}).join('\n');return}if(CU){$('sr').value=rc(CU,parseInt($('mw').value)||8).map(function(c,i){return (i+1)+'\n'+ts(c.s)+' --> '+ts(c.e)+'\n'+c.t+'\n'}).join('\n');return}if(!D)return;var w=parseFloat($('wps').value)||2.5,mx=parseInt($('mw').value)||8,t=0,k=1,out='';
+D.scenes.forEach(function(s){var ws=String(s.narration).split(/\s+/).filter(Boolean);for(var a=0;a<ws.length;a+=mx){var c=ws.slice(a,a+mx),d=c.length/w;out+=k++ +'\n'+ts(t)+' --> '+ts(t+d)+'\n'+c.join(' ')+'\n\n';t+=d}});$('sr').value=out}
+</script></main></body></html>
