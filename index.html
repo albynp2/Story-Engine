@@ -48,6 +48,19 @@ body{display:flex;min-height:100vh}
   .nav .desc{display:none}
   .app-main{margin-left:0!important;width:100%;padding:14px}
 }
+<style>
+.page{display:none}.page.active{display:block}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.video-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px}
+.video-card video{width:100%;border-radius:12px;background:#000;display:block}
+.video-meta{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:10px 0 4px}
+.video-title{font-weight:800;line-height:1.25}.video-sub{font-size:12px;color:var(--mu)}
+.video-copy{margin-top:10px}.video-copy textarea{min-height:85px}
+.empty{padding:30px;text-align:center;color:var(--mu);border:1px dashed var(--bd);border-radius:16px}
+.settings-note{background:var(--soft);border:1px solid var(--bd);padding:12px;border-radius:12px;font-size:13px;color:var(--mu);margin-bottom:14px}
+.dash-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.badge{font-size:10px;font-weight:800;color:var(--ac);border:1px solid var(--bd);background:var(--soft);padding:5px 8px;border-radius:999px}
+</style>
 </style>
 </head><body>
 <aside class="sidebar">
@@ -55,16 +68,19 @@ body{display:flex;min-height:100vh}
   <div class="brand-sub">AI Content Studio • Local</div>
   <div class="nav-title">Content Factory</div>
   <div class="nav">
+    <button data-page="dashboard" onclick="showPage('dashboard')"><span class="num">00</span><span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></button>
     <button data-mode="explainer" onclick="setMode('explainer')"><span class="num">01</span><span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></button>
     <button data-mode="news" onclick="setMode('news')"><span class="num">02</span><span>NEWS<div class="desc">Berita + visualisasi AI</div></span></button>
     <button data-mode="drama" onclick="setMode('drama')"><span class="num">03</span><span>DRAMA AI<div class="desc">Cerita sinematik</div></span></button>
     <button data-mode="horror" onclick="setMode('horror')"><span class="num">04</span><span>HORROR AI<div class="desc">Cinematic horror</div></span></button>
     <button data-mode="psychology" onclick="setMode('psychology')"><span class="num">05</span><span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></button>
     <button data-mode="history" onclick="setMode('history')"><span class="num">06</span><span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></button>
+    <button data-page="settings" onclick="showPage('settings')"><span class="num">⚙</span><span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></button>
   </div>
 </aside>
 <main class="app-main">
 
+<div id="studioPage" class="page active">
 <div class="modebar">
   <div><h1 id="modeTitle">Story Engine</h1><p id="modeDesc">Ubah satu judul jadi video bergambar, lengkap dengan suara dan subtitle.</p></div>
   <div class="mode-chip" id="modeChip">EXPLAINER</div>
@@ -92,7 +108,7 @@ body{display:flex;min-height:100vh}
 <textarea id="p1" readonly style="margin-top:8px;display:none"></textarea>
 <button class="g" id="c1" style="display:none;margin-top:6px" onclick="cp('p1')">Copy</button></section>
 
-<section><h2><span>2</span>Cerita JSON dari ChatGPT</h2><label class="f" style="max-width:360px">Cara dapat JSON<small>Manual: tempel balasan ChatGPT di kotak bawah. Otomatis: dikirim ke OpenAI lewat API.</small><select id="jm" onchange="jmd()"><option value="man">Manual (tempel dari ChatGPT)</option><option value="auto">Otomatis (API OpenAI)</option></select></label><div id="jauto" style="display:none"><div class="grid"><label class="f">API key OpenAI<small>Disimpan di browser laptop ini saja</small><input id="ok" type="password" placeholder="sk-..." autocomplete="off"></label><label class="f">Model<small>Ganti kalau akun lu pakai model lain</small><input id="om" value="gpt-4o-mini"></label></div><button onclick="oa()">Buat cerita otomatis</button> <small id="oam" style="color:var(--mu)"></small><p class="s" style="margin:6px 0 0">Prompt dari langkah 1 dikirim ke OpenAI, balasannya langsung jadi prompt Flow di langkah 3. Butuh internet dan saldo API.</p></div>
+<section><h2><span>2</span>Cerita JSON dari ChatGPT</h2><label class="f" style="max-width:360px">Cara dapat JSON<small>Manual: tempel balasan ChatGPT di kotak bawah. Otomatis: dikirim ke OpenAI lewat API.</small><select id="jm" onchange="jmd()"><option value="man">Manual (tempel dari ChatGPT)</option><option value="auto">Otomatis (API OpenAI)</option></select></label><div id="jauto" style="display:none"><button onclick="oa()">Buat cerita otomatis</button> <small id="oam" style="color:var(--mu)"></small><p class="s" style="margin:6px 0 0">API key dan model diambil dari Settings. Prompt dari langkah 1 dikirim ke OpenAI, balasannya langsung jadi prompt Flow di langkah 3. Butuh internet dan saldo API.</p></div>
 <textarea id="js" placeholder='{"title":...,"scenes":[...]}'></textarea>
 <button onclick="gen()">Generate</button> <span class="err" id="er"></span></section>
 
@@ -105,7 +121,15 @@ body{display:flex;min-height:100vh}
 <div class="row"><label style="font-size:13px;color:var(--mu)">Kata per detik<input id="wps" type="number" step="0.1" value="2.5" oninput="srt()"></label><label style="font-size:13px;color:var(--mu)">Kata per subtitle (chunk)<input id="mw" type="number" min="1" max="30" value="8" oninput="srt()"></label></div>
 <button onclick="srt()">Perbarui SRT</button>
 <textarea id="sr" readonly style="margin-top:8px"></textarea><button class="g" style="margin-top:6px" onclick="cp('sr')">Copy SRT</button>
-<p class="s" style="margin-top:8px">Simpan hasil copy ke file .srt. Kalau durasi audio beda, ubah kata/detik lalu buat ulang.</p><h2 style="margin-top:18px"><span>5</span>Buat video</h2><p class="s" style="margin-bottom:6px">Gabung gambar (langkah 3) + voice over + subtitle. Dirender real-time, jadi biarkan tab ini terbuka sampai selesai. Jumlah kata yang tampil per subtitle diatur di kolom Kata per subtitle (langkah 4). Kalau tiap adegan sudah punya audio, lama tiap gambar mengikuti durasi audio adegannya.</p><style>.wb{width:36px;height:36px;padding:0;border-radius:8px;background:var(--soft);color:var(--ac);border:1px solid var(--bd);font-size:10px;margin:0}.wb.on{background:var(--ac);color:var(--on)}</style><h3 style="font-size:15px;margin:16px 0 4px">Watermark (opsional)</h3>
+<p class="s" style="margin-top:8px">Simpan hasil copy ke file .srt. Kalau durasi audio beda, ubah kata/detik lalu buat ulang.</p><section id="socialSection" style="display:none">
+<h2><span>5</span>Caption &amp; hashtag otomatis</h2>
+<p class="s">Dibuat otomatis dari hook/narasi pembuka yang sudah di-generate. Tinggal copy untuk upload.</p>
+<label class="f">Caption<small>Berbasis hook adegan pertama + konteks singkat.</small><textarea id="socialCaption" readonly></textarea></label>
+<button class="g" style="margin-top:6px" onclick="cp('socialCaption')">Copy caption</button>
+<label class="f" style="margin-top:12px">Hashtag<small>Disesuaikan dengan content type dan kata kunci dari judul/hook.</small><textarea id="socialHashtags" readonly style="min-height:70px"></textarea></label>
+<button class="g" style="margin-top:6px" onclick="cp('socialHashtags')">Copy hashtag</button>
+</section>
+<h2 style="margin-top:18px"><span>6</span>Buat video</h2><p class="s" style="margin-bottom:6px">Gabung gambar (langkah 3) + voice over + subtitle. Dirender real-time, jadi biarkan tab ini terbuka sampai selesai. Jumlah kata yang tampil per subtitle diatur di kolom Kata per subtitle (langkah 4). Kalau tiap adegan sudah punya audio, lama tiap gambar mengikuti durasi audio adegannya.</p><style>.wb{width:36px;height:36px;padding:0;border-radius:8px;background:var(--soft);color:var(--ac);border:1px solid var(--bd);font-size:10px;margin:0}.wb.on{background:var(--ac);color:var(--on)}</style><h3 style="font-size:15px;margin:16px 0 4px">Watermark (opsional)</h3>
 <div class="grid"><label class="f">Teks<small>mis. @namakanal</small><input id="wt" placeholder="@namakanal" oninput="wpv()"></label><label class="f">Logo (gambar)<small>PNG transparan paling bagus</small><input type="file" id="wf" accept="image/*" onchange="wl(this.files[0])"></label></div>
 <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;align-items:flex-start">
 <div><div style="font-weight:600;font-size:13px;margin-bottom:6px">Posisi</div><div id="wg" style="display:grid;grid-template-columns:repeat(3,36px);gap:4px"></div><input type="hidden" id="wp" value="br"></div>
@@ -113,8 +137,57 @@ body{display:flex;min-height:100vh}
 <div><div style="font-weight:600;font-size:13px;margin-bottom:6px">Preview</div><canvas id="wpvc" style="max-width:100%;border-radius:12px;border:1px solid var(--bd)"></canvas></div></div>
 <p class="s" style="margin:14px 0 8px">Format video: <b id="vf"></b> (diubah di langkah 1)</p><label class="f" style="max-width:280px">Kualitas<small>720p lebih cepat, 1080p lebih tajam</small><select id="vq"><option value="0.6667" selected>HD 720p (cepat)</option><option value="1">Full HD 1080p</option></select></label><button id="vb" onclick="mkv()">Generate video</button> <small id="vm" style="color:var(--mu)"></small><video id="vv" controls playsinline style="width:100%;margin-top:8px;display:none;border-radius:8px"></video><button class="g" id="vd" style="display:none;margin-top:8px" onclick="vdl()">Download video (.webm)</button></section>
 
+</div>
+<div id="dashboardPage" class="page">
+  <div class="modebar"><div><h1>Dashboard</h1><p>Semua video yang sudah berhasil di-generate dari seluruh menu.</p></div><div class="mode-chip">VIDEO LIBRARY</div></div>
+  <div class="dash-toolbar">
+    <button class="g" onclick="renderDashboard()">Refresh</button>
+    <button class="g" onclick="clearVideoLibrary()">Hapus semua</button>
+    <span class="video-sub" id="dashCount"></span>
+  </div>
+  <div id="dashList" class="dash-grid"></div>
+</div>
+<div id="settingsPage" class="page">
+  <div class="modebar"><div><h1>Settings</h1><p>Konfigurasi yang dipakai bersama oleh semua content menu.</p></div><div class="mode-chip">CONFIG</div></div>
+  <section>
+    <h2><span>1</span>OpenAI API</h2>
+    <div class="settings-note">API key tidak lagi ditampilkan di halaman generator. Untuk keamanan, key hanya disimpan di browser lokal laptop ini dan dikirim ke server lokal saat fitur OpenAI dipakai.</div>
+    <label class="f">OpenAI API Key<small>Contoh: sk-... • kosongkan jika memakai environment variable OPENAI_API_KEY di server.</small>
+      <input id="setOpenAIKey" type="password" placeholder="sk-..." autocomplete="off">
+    </label>
+    <label class="f" style="margin-top:12px">Model<small>Model OpenAI yang digunakan untuk membuat cerita JSON.</small>
+      <input id="setOpenAIModel" value="gpt-4o-mini">
+    </label>
+    <div class="row" style="margin-top:8px">
+      <button onclick="saveSettings()">Simpan Settings</button>
+      <button class="g" onclick="clearOpenAIKey()">Hapus API Key</button>
+    </div>
+    <small id="setMsg" style="color:var(--mu)"></small>
+  </section>
+</div>
+
 <script>
 var $=function(i){return document.getElementById(i)},D=null;
+var DB_NAME='story_engine_db',DB_VER=1;
+function getSettings(){try{return JSON.parse(localStorage.getItem('se_settings')||'{}')}catch(e){return {}}}
+function saveSettings(){var s={openaiKey:$('setOpenAIKey').value.trim(),openaiModel:$('setOpenAIModel').value.trim()||'gpt-4o-mini'};localStorage.setItem('se_settings',JSON.stringify(s));$('setMsg').textContent='Settings tersimpan di browser lokal.'}
+function clearOpenAIKey(){$('setOpenAIKey').value='';var s=getSettings();s.openaiKey='';localStorage.setItem('se_settings',JSON.stringify(s));$('setMsg').textContent='API key dihapus.'}
+function loadSettings(){var s=getSettings();if($('setOpenAIKey'))$('setOpenAIKey').value=s.openaiKey||'';if($('setOpenAIModel'))$('setOpenAIModel').value=s.openaiModel||'gpt-4o-mini'}
+function showPage(p){document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});$('studioPage').classList.toggle('active',p==='studio');$('dashboardPage').classList.toggle('active',p==='dashboard');$('settingsPage').classList.toggle('active',p==='settings');document.querySelectorAll('.nav button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-page')===p)});if(p==='dashboard')renderDashboard();if(p==='settings')loadSettings()}
+function openDB(){return new Promise(function(res,rej){var r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=function(){var db=r.result;if(!db.objectStoreNames.contains('videos')){var st=db.createObjectStore('videos',{keyPath:'id'});st.createIndex('createdAt','createdAt')}};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}})}
+function saveVideoRecord(rec){return openDB().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('videos','readwrite');tx.objectStore('videos').put(rec);tx.oncomplete=function(){res()};tx.onerror=function(){rej(tx.error)}})})}
+function getVideos(){return openDB().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('videos','readonly'),st=tx.objectStore('videos'),a=[];st.openCursor(null,'prev').onsuccess=function(e){var cur=e.target.result;if(cur){a.push(cur.value);cur.continue()}else res(a)};tx.onerror=function(){rej(tx.error)}})})}
+function deleteVideo(id){return openDB().then(function(db){return new Promise(function(res,rej){var tx=db.transaction('videos','readwrite');tx.objectStore('videos').delete(id);tx.oncomplete=res;tx.onerror=function(){rej(tx.error)}})})}
+function clearVideoLibrary(){if(!confirm('Hapus semua video yang tersimpan di Dashboard?'))return;openDB().then(function(db){var tx=db.transaction('videos','readwrite');tx.objectStore('videos').clear();tx.oncomplete=renderDashboard})}
+function renderDashboard(){var box=$('dashList');if(!box)return;box.innerHTML='<div class="empty">Memuat library...</div>';getVideos().then(function(L){$('dashCount').textContent=L.length+' video';if(!L.length){box.innerHTML='<div class="empty">Belum ada video tersimpan. Generate video dari salah satu menu untuk masuk ke sini.</div>';return}box.innerHTML=L.map(function(v){return '<article class="video-card"><video controls playsinline src="'+URL.createObjectURL(v.blob)+'"></video><div class="video-meta"><div><div class="video-title">'+esc(v.title)+'</div><div class="video-sub">'+esc(v.modeLabel)+' • '+esc(v.formatLabel)+' • '+new Date(v.createdAt).toLocaleString('id-ID')+'</div></div><span class="badge">'+v.scenes+' scene</span></div><div class="video-copy"><label class="f">Caption<textarea readonly id="dc'+v.id+'">'+esc(v.caption)+'</textarea></label><button class="g" onclick="copyTextValue(\'dc'+v.id+'\')">Copy caption</button><label class="f" style="margin-top:8px">Hashtag<textarea readonly id="dh'+v.id+'" style="min-height:55px">'+esc(v.hashtags)+'</textarea></label><button class="g" onclick="copyTextValue(\'dh'+v.id+'\')">Copy hashtag</button></div><div class="row" style="margin-top:8px"><button class="g" onclick="downloadStored(\''+v.id+'\')">Download</button><button class="g" onclick="removeStored(\''+v.id+'\')">Hapus</button></div></article>'}).join('')}).catch(function(e){box.innerHTML='<div class="empty">Dashboard gagal dibuka: '+esc(e.message)+'</div>'})}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(x){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]})}
+function copyTextValue(id){var t=$(id);if(!t)return;navigator.clipboard.writeText(t.value).catch(function(){t.select();document.execCommand('copy')})}
+function downloadStored(id){getVideos().then(function(L){var v=L.find(function(x){return x.id===id});if(!v)return;var a=document.createElement('a');a.href=URL.createObjectURL(v.blob);a.download='story-'+id+'.webm';a.click()})}
+function removeStored(id){deleteVideo(id).then(renderDashboard)}
+function slugWords(txt){return String(txt||'').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(function(w){return w.length>=4&&['yang','dengan','untuk','dari','dalam','atau','adalah','ternyata','ketika','karena','sebuah','this','that','with','from','into','about','what','when','your','have','will'].indexOf(w)<0})}
+function buildSocial(){if(!D||!D.scenes||!D.scenes.length)return null;var hook=String(D.scenes[0].narration||'').trim(),title=String($('title').value||D.title||'').trim(),mode=$('mode').value;var lead=hook||title;var c=lead+'\n\n'+(title&&hook.toLowerCase()!==title.toLowerCase()?title+' — simak ceritanya sampai akhir.':'Simak ceritanya sampai akhir.')+'\n\nFollow untuk cerita dan konten berikutnya.';var base={explainer:['#FAMSALExplains','#Explainer','#FaktaMenarik'],news:['#FAMSALNow','#News','#BeritaTerkini'],drama:['#FAMSALStories','#DramaAI','#Cerita'],horror:['#FAMSALDark','#HorrorAI','#CeritaHorror'],psychology:['#FAMSALMind','#Psychology','#Psikologi'],history:['#FAMSALOrigin','#History','#Sejarah']};var tags=base[mode]||base.explainer;slugWords(title+' '+hook).slice(0,5).forEach(function(w){var h='#'+w.charAt(0).toUpperCase()+w.slice(1);if(tags.indexOf(h)<0)tags.push(h)});return {hook:hook,caption:c,hashtags:tags.join(' ')}}
+function updateSocial(){var x=buildSocial();if(!x)return;$('socialCaption').value=x.caption;$('socialHashtags').value=x.hashtags;$('socialSection').style.display='block'}
+loadSettings();
 function sv(){try{localStorage.setItem('se',JSON.stringify({t:$('title').value,j:$('js').value}))}catch(e){}}
 try{var o=JSON.parse(localStorage.getItem('se')||'{}');$('title').value=o.t||'';$('js').value=o.j||''}catch(e){}
 function cp(id){var t=$(id);t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}}
@@ -147,7 +220,7 @@ d.scenes.forEach(function(s,i){var who=(s.characters||[]).map(function(n){return
 var p='File name: gambar'+(s.no||i+1)+'. '+($('style').value||d.style)+'. '+s.visual+(who?' Characters: '+who+'.':'')+(s.mood?' Mood: '+s.mood+'.':'')+' '+AR()+', no text, no watermark.';
 h+='<div class="sc"><b>Adegan '+(s.no||i+1)+'</b><textarea id="f'+i+'" readonly style="min-height:80px;margin-top:6px">'+p.replace(/</g,'&lt;')+'</textarea><div class="row" style="margin-top:6px"><button class="g" onclick="cp(\'f'+i+'\')">Copy prompt</button><input type="file" accept="image/*" onchange="im(this,'+i+')"></div><div class="s" style="margin:10px 0 4px"><b>Narasi:</b> '+String(s.narration).replace(/</g,'&lt;')+'</div><div class="row"><button class="g" onclick="cn('+i+')">Copy narasi</button><input type="file" accept="audio/*" onchange="sa(this.files[0],'+i+')"></div><small id="as'+i+'" style="color:var(--mu)"></small><img id="i'+i+'" style="display:none"></div>'});
 $('scenes').innerHTML=h;$('all').value=d.scenes.map(function(s,i){return '[gambar'+(s.no||i+1)+']\n'+$('f'+i).value}).join('\n\n');$('s3').style.display=$('s4').style.display='block';
-$('nar').value=d.scenes.map(function(s){return s.narration}).join('\n\n');srt()}
+$('nar').value=d.scenes.map(function(s){return s.narration}).join('\n\n');updateSocial();srt()}
 var dz=$('dz');dz.ondragover=function(e){e.preventDefault()};dz.ondrop=function(e){e.preventDefault();fl(e.dataTransfer.files)};
 function put(i,x){var m=$('i'+i);m.src=URL.createObjectURL(x.b);m.style.display='block';IB[i]=x;if(!$('n'+i))m.insertAdjacentHTML('afterend','<div class="s" id="n'+i+'"></div>');$('n'+i).textContent=x.n;wpv()}
 function fl(fs){var zm=$('zm');if(!D||typeof JSZip==='undefined'){zm.textContent=!D?'Generate dulu (langkah 2).':'JSZip gagal dimuat, coba refresh.';return}
@@ -287,8 +360,7 @@ function ep(){if(!D){$('epy').value='Generate dulu (langkah 2).';return}$('epy')
 function pc(tx){var o=[];tx.replace(/\r/g,'').split(/\n\n+/).forEach(function(b){var L=b.split('\n'),i=L.findIndex(function(l){return l.indexOf('-->')>=0});if(i<0)return;var p=L[i].split('-->');o.push({s:tp(p[0]),e:tp(p[1].trim().split(' ')[0]),t:L.slice(i+1).join(' ').replace(/<[^>]+>/g,'').trim()})});return o.filter(function(c){return c.t&&!isNaN(c.s)&&!isNaN(c.e)})}
 var CU=null;
 function rc(cs,mx){var o=[];cs.forEach(function(c){var w=c.t.split(/\s+/).filter(Boolean),d=c.e-c.s;for(var a=0;a<w.length;a+=mx){var p=w.slice(a,a+mx);o.push({s:c.s+d*a/w.length,e:c.s+d*(a+p.length)/w.length,t:p.join(' ')})}});return o}
-function oa(){var m=$('oam'),t=$('title').value.trim();if(!t){m.textContent='Isi judul di langkah 1 dulu.';return}mk1();var key=$('ok').value.trim();try{localStorage.setItem('se_k',key)}catch(e){}m.textContent='Meminta cerita ke OpenAI...';fetch('/openai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,model:$('om').value.trim(),prompt:$('p1').value})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);$('js').value=j.text;gen();m.textContent=$('er').textContent?'':'Selesai, prompt Flow sudah dibuat di langkah 3.'}).catch(function(e){m.textContent='Gagal: '+e.message})}
-try{$('ok').value=localStorage.getItem('se_k')||''}catch(e){}
+function oa(){var m=$('oam'),t=$('title').value.trim();if(!t){m.textContent='Isi judul di langkah 1 dulu.';return}mk1();var s=getSettings(),key=s.openaiKey||'';m.textContent=key?'Meminta cerita ke OpenAI...':'API key belum diisi di Settings...';fetch('/openai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:key,model:s.openaiModel||'gpt-4o-mini',prompt:$('p1').value})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);$('js').value=j.text;gen();m.textContent=$('er').textContent?'':'Selesai, prompt Flow sudah dibuat di langkah 3.'}).catch(function(e){m.textContent='Gagal: '+e.message})}
 function et(){var m=$('em');if(!D){m.textContent='Generate dulu (langkah 2).';return}m.textContent='Membuat suara...';fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:$('nar').value,voice:$('ev').value,rate:$('er2').value})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);var b=atob(j.audio),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);SA=[];SD=[];SCU=[];al(new File([u],'voiceover.mp3',{type:'audio/mpeg'}));sl(new File([j.srt],'voiceover.srt'));m.textContent='Selesai, suara & subtitle sudah dimuat.'}).catch(function(e){m.textContent='Gagal: '+e.message+' (cek server lokal masih jalan)'})}
 function et2(){var m=$('em');if(!D){m.textContent='Generate dulu (langkah 2).';return}var i=0,N=D.scenes.length;function nx(){if(i>=N){m.textContent='Selesai, suara '+N+' adegan sudah dimuat.';sm();return}m.textContent='Membuat suara adegan '+(i+1)+' dari '+N+'...';var idx=i;fetch('/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:String(D.scenes[idx].narration),voice:$('ev').value,rate:$('er2').value})}).then(function(r){return r.json()}).then(function(j){if(j.error)throw new Error(j.error);var b=atob(j.audio),u=new Uint8Array(b.length);for(var k=0;k<b.length;k++)u[k]=b.charCodeAt(k);return setSA(idx,new File([u],'adegan'+(idx+1)+'.mp3',{type:'audio/mpeg'}),'adegan'+(idx+1)+'.mp3').then(function(){SCU[idx]=pc(j.srt);i++;nx()})}).catch(function(e){m.textContent='Gagal: '+e.message+' (cek server lokal masih jalan)'})}nx()}
 function ec(){$('ecmd').value='edge-tts --voice '+$('ev').value+' --rate='+$('er2').value+' --file naskah.txt --write-media voiceover.mp3 --write-subtitles voiceover.srt'}
@@ -311,7 +383,7 @@ var mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].
 if(!mt){vm.textContent='Browser ini tidak mendukung perekaman video.';return}
 var rec=new MediaRecorder(st,{mimeType:mt,videoBitsPerSecond:q>=1?8000000:5000000}),parts=[];
 rec.ondataavailable=function(e){if(e.data.size)parts.push(e.data)};
-rec.onstop=function(){VB=new Blob(parts,{type:'video/webm'});var v=$('vv');v.src=URL.createObjectURL(VB);v.style.display='block';$('vd').style.display='inline-block';$('vb').disabled=false;vm.textContent='Selesai ('+T.toFixed(1)+' detik).'};
+rec.onstop=function(){VB=new Blob(parts,{type:'video/webm'});var v=$('vv');v.src=URL.createObjectURL(VB);v.style.display='block';$('vd').style.display='inline-block';$('vb').disabled=false;var sx=buildSocial()||{caption:'',hashtags:''};var id=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);saveVideoRecord({id:id,blob:VB,title:$('title').value.trim()||D.title||'Untitled',mode:$('mode').value,modeLabel:CONTENT[$('mode').value].chip,formatLabel:FM[$('fmt').value].name||$('fmt').value,scenes:N,createdAt:new Date().toISOString(),caption:sx.caption,hashtags:sx.hashtags}).then(function(){vm.textContent='Selesai ('+T.toFixed(1)+' detik). Video tersimpan di Dashboard.'}).catch(function(e){vm.textContent='Selesai ('+T.toFixed(1)+' detik), tetapi gagal menyimpan ke Dashboard: '+e.message})};
 function draw(){var now=au?au.currentTime:(performance.now()-clock0)/1000;
 if(now>=T||(au&&au.ended)){if(!fin){fin=true;setTimeout(function(){rec.stop();if(ac)ac.close()},300)}return}
 var k=0;while(k<N-1&&now>=sc[k].e)k++;
