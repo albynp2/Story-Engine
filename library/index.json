@@ -1,0 +1,781 @@
+{
+ "version": 1,
+ "assets": [
+  {
+   "id": "sun",
+   "kind": "icon",
+   "file": "icons/sun.svg",
+   "tags": [
+    "matahari",
+    "sun",
+    "panas",
+    "cahaya",
+    "heat",
+    "light"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "cloud",
+   "kind": "icon",
+   "file": "icons/cloud.svg",
+   "tags": [
+    "awan",
+    "cloud",
+    "langit",
+    "sky"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "rain_cloud",
+   "kind": "icon",
+   "file": "icons/rain_cloud.svg",
+   "tags": [
+    "hujan",
+    "awan",
+    "rain",
+    "cloud",
+    "mendung"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "storm",
+   "kind": "icon",
+   "file": "icons/storm.svg",
+   "tags": [
+    "badai",
+    "petir",
+    "storm",
+    "thunder",
+    "lightning"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "drop",
+   "kind": "icon",
+   "file": "icons/drop.svg",
+   "tags": [
+    "tetes",
+    "air",
+    "drop",
+    "water",
+    "hujan",
+    "embun"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "vapor",
+   "kind": "icon",
+   "file": "icons/vapor.svg",
+   "tags": [
+    "uap",
+    "penguapan",
+    "evaporasi",
+    "vapor",
+    "steam",
+    "naik"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "wave",
+   "kind": "icon",
+   "file": "icons/wave.svg",
+   "tags": [
+    "laut",
+    "ombak",
+    "sungai",
+    "air",
+    "ocean",
+    "wave",
+    "sea",
+    "river"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "mountain",
+   "kind": "icon",
+   "file": "icons/mountain.svg",
+   "tags": [
+    "gunung",
+    "mountain",
+    "bukit",
+    "alam"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "tree",
+   "kind": "icon",
+   "file": "icons/tree.svg",
+   "tags": [
+    "pohon",
+    "tree",
+    "hutan",
+    "forest",
+    "alam"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "plant",
+   "kind": "icon",
+   "file": "icons/plant.svg",
+   "tags": [
+    "tanaman",
+    "plant",
+    "daun",
+    "leaf",
+    "tumbuh",
+    "grow"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "house",
+   "kind": "icon",
+   "file": "icons/house.svg",
+   "tags": [
+    "rumah",
+    "house",
+    "home",
+    "tempat"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "brain",
+   "kind": "icon",
+   "file": "icons/brain.svg",
+   "tags": [
+    "otak",
+    "brain",
+    "pikiran",
+    "mind",
+    "psikologi"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "thought",
+   "kind": "icon",
+   "file": "icons/thought.svg",
+   "tags": [
+    "pikiran",
+    "thought",
+    "mikir",
+    "bubble",
+    "overthinking",
+    "ragu"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "lightbulb",
+   "kind": "icon",
+   "file": "icons/lightbulb.svg",
+   "tags": [
+    "lampu",
+    "bulb",
+    "ide",
+    "idea",
+    "cahaya",
+    "solusi"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "clock",
+   "kind": "icon",
+   "file": "icons/clock.svg",
+   "tags": [
+    "jam",
+    "clock",
+    "waktu",
+    "time",
+    "durasi"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "heart",
+   "kind": "icon",
+   "file": "icons/heart.svg",
+   "tags": [
+    "hati",
+    "heart",
+    "cinta",
+    "love",
+    "kesehatan"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "star",
+   "kind": "icon",
+   "file": "icons/star.svg",
+   "tags": [
+    "bintang",
+    "star",
+    "favorit",
+    "penting"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "check",
+   "kind": "icon",
+   "file": "icons/check.svg",
+   "tags": [
+    "centang",
+    "check",
+    "benar",
+    "sukses",
+    "ok"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "cross",
+   "kind": "icon",
+   "file": "icons/cross.svg",
+   "tags": [
+    "silang",
+    "salah",
+    "cross",
+    "no",
+    "gagal"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "question",
+   "kind": "icon",
+   "file": "icons/question.svg",
+   "tags": [
+    "tanya",
+    "question",
+    "penasaran",
+    "kenapa",
+    "mengapa"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "warning",
+   "kind": "icon",
+   "file": "icons/warning.svg",
+   "tags": [
+    "peringatan",
+    "warning",
+    "bahaya",
+    "awas",
+    "masalah"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "gear",
+   "kind": "icon",
+   "file": "icons/gear.svg",
+   "tags": [
+    "roda",
+    "gigi",
+    "gear",
+    "sistem",
+    "mesin",
+    "proses",
+    "setting"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "book",
+   "kind": "icon",
+   "file": "icons/book.svg",
+   "tags": [
+    "buku",
+    "book",
+    "belajar",
+    "ilmu",
+    "edukasi"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "magnifier",
+   "kind": "icon",
+   "file": "icons/magnifier.svg",
+   "tags": [
+    "kaca",
+    "pembesar",
+    "search",
+    "cari",
+    "riset",
+    "magnifier"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "globe",
+   "kind": "icon",
+   "file": "icons/globe.svg",
+   "tags": [
+    "bumi",
+    "globe",
+    "dunia",
+    "earth",
+    "world",
+    "internet"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "thermometer",
+   "kind": "icon",
+   "file": "icons/thermometer.svg",
+   "tags": [
+    "suhu",
+    "thermometer",
+    "panas",
+    "dingin",
+    "temperatur"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "fire",
+   "kind": "icon",
+   "file": "icons/fire.svg",
+   "tags": [
+    "api",
+    "fire",
+    "panas",
+    "bakar",
+    "energi"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "snowflake",
+   "kind": "icon",
+   "file": "icons/snowflake.svg",
+   "tags": [
+    "salju",
+    "snowflake",
+    "dingin",
+    "es",
+    "ice",
+    "winter"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "lightning",
+   "kind": "icon",
+   "file": "icons/lightning.svg",
+   "tags": [
+    "petir",
+    "kilat",
+    "lightning",
+    "listrik",
+    "energi",
+    "cepat"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "moon",
+   "kind": "icon",
+   "file": "icons/moon.svg",
+   "tags": [
+    "bulan",
+    "moon",
+    "malam",
+    "tidur",
+    "night",
+    "sleep"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "wind",
+   "kind": "icon",
+   "file": "icons/wind.svg",
+   "tags": [
+    "angin",
+    "wind",
+    "udara",
+    "air",
+    "hembus"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "battery",
+   "kind": "icon",
+   "file": "icons/battery.svg",
+   "tags": [
+    "baterai",
+    "battery",
+    "energi",
+    "capek",
+    "lelah",
+    "power"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "phone",
+   "kind": "icon",
+   "file": "icons/phone.svg",
+   "tags": [
+    "hp",
+    "phone",
+    "smartphone",
+    "gadget",
+    "media",
+    "sosial"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "coin",
+   "kind": "icon",
+   "file": "icons/coin.svg",
+   "tags": [
+    "koin",
+    "coin",
+    "uang",
+    "money",
+    "harga",
+    "ekonomi"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "chart",
+   "kind": "icon",
+   "file": "icons/chart.svg",
+   "tags": [
+    "grafik",
+    "chart",
+    "data",
+    "naik",
+    "statistik"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "shield",
+   "kind": "icon",
+   "file": "icons/shield.svg",
+   "tags": [
+    "perisai",
+    "shield",
+    "aman",
+    "lindungi",
+    "security"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "lock",
+   "kind": "icon",
+   "file": "icons/lock.svg",
+   "tags": [
+    "kunci",
+    "lock",
+    "gembok",
+    "privasi",
+    "aman"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "person",
+   "kind": "icon",
+   "file": "icons/person.svg",
+   "tags": [
+    "orang",
+    "person",
+    "manusia",
+    "people",
+    "user"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "target",
+   "kind": "icon",
+   "file": "icons/target.svg",
+   "tags": [
+    "target",
+    "tujuan",
+    "goal",
+    "fokus",
+    "sasaran"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "arrow",
+   "kind": "icon",
+   "file": "icons/arrow.svg",
+   "tags": [
+    "panah",
+    "arrow",
+    "lanjut",
+    "arah"
+   ],
+   "tint": true,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "whoosh",
+   "kind": "sfx",
+   "file": "sfx/whoosh.wav",
+   "tags": [
+    "whoosh",
+    "transisi",
+    "cepat",
+    "swipe"
+   ],
+   "duration": 0.7,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "pop",
+   "kind": "sfx",
+   "file": "sfx/pop.wav",
+   "tags": [
+    "pop",
+    "muncul",
+    "klik",
+    "bubble"
+   ],
+   "duration": 0.18,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "ding",
+   "kind": "sfx",
+   "file": "sfx/ding.wav",
+   "tags": [
+    "ding",
+    "notifikasi",
+    "sukses",
+    "bel"
+   ],
+   "duration": 1.0,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "click",
+   "kind": "sfx",
+   "file": "sfx/click.wav",
+   "tags": [
+    "klik",
+    "click",
+    "tombol",
+    "tap"
+   ],
+   "duration": 0.06,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "success",
+   "kind": "sfx",
+   "file": "sfx/success.wav",
+   "tags": [
+    "sukses",
+    "berhasil",
+    "success",
+    "naik"
+   ],
+   "duration": 0.9,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "rain",
+   "kind": "sfx",
+   "file": "sfx/rain.wav",
+   "tags": [
+    "hujan",
+    "rain",
+    "air",
+    "gerimis",
+    "ambience"
+   ],
+   "duration": 3.0,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "thunder",
+   "kind": "sfx",
+   "file": "sfx/thunder.wav",
+   "tags": [
+    "guntur",
+    "petir",
+    "thunder",
+    "badai"
+   ],
+   "duration": 2.2,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  },
+  {
+   "id": "riser",
+   "kind": "sfx",
+   "file": "sfx/riser.wav",
+   "tags": [
+    "naik",
+    "riser",
+    "ketegangan",
+    "build",
+    "transisi"
+   ],
+   "duration": 1.2,
+   "license": "CC0-1.0",
+   "author": "Story Engine",
+   "source": "original-starter"
+  }
+ ]
+}

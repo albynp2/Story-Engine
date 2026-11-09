@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\DATA_Alby\Data_pirbadi_alby\DIGITAL_BUSINESS\Story_engine\story-engine\venv"
+VIRTUAL_ENV="C:\DATA_Alby\Data_pirbadi_alby\DIGITAL_BUSINESS\Claude 3\story-engine\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
