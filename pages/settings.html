@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Settings - Story Engine</title>
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../jszip.min.js"></script>
+</head><body data-page="settings">
+<aside class="sidebar">
+  <div class="brand">Story Engine</div>
+  <div class="brand-sub">AI Content Studio • Local</div>
+  <div class="nav-title">Content Factory</div>
+  <div class="nav">
+    <a href="dashboard.html">00 <span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></a>
+    <a href="explainer.html">01 <span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></a>
+    <a href="news.html">02 <span>NEWS<div class="desc">Berita + visualisasi AI</div></span></a>
+    <a href="drama-ai.html">03 <span>DRAMA AI<div class="desc">Cerita sinematik</div></span></a>
+    <a href="horror-ai.html">04 <span>HORROR AI<div class="desc">Cinematic horror</div></span></a>
+    <a href="psychology.html">05 <span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></a>
+    <a href="history-stickman.html">06 <span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></a>
+    <a href="motion-graphic.html">MG <span>MOTION GRAPHIC<div class="desc">Teks, shape & animasi</div></span></a>
+    <a href="settings.html">⚙ <span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></a>
+  </div>
+</aside>
+<main class="app-main">
+<div id="settingsPage" class="page">
+  <div class="modebar"><div><h1>Settings</h1><p>Konfigurasi yang dipakai bersama oleh semua content menu.</p></div><div class="mode-chip">CONFIG</div></div>
+  <section>
+    <h2><span>1</span>OpenAI API</h2>
+    <div class="settings-note">API key tidak lagi ditampilkan di halaman generator. Untuk keamanan, key hanya disimpan di browser lokal laptop ini dan dikirim ke server lokal saat fitur OpenAI dipakai.</div>
+    <label class="f">OpenAI API Key<small>Contoh: sk-... • kosongkan jika memakai environment variable OPENAI_API_KEY di server.</small>
+      <input id="setOpenAIKey" type="password" placeholder="sk-..." autocomplete="off">
+    </label>
+    <label class="f" style="margin-top:12px">Model<small>Model OpenAI yang digunakan untuk membuat cerita JSON.</small>
+      <input id="setOpenAIModel" value="gpt-4o-mini">
+    </label>
+    <div class="row" style="margin-top:8px">
+      <button onclick="saveSettings()">Simpan Settings</button>
+      <button class="g" onclick="clearOpenAIKey()">Hapus API Key</button>
+    </div>
+    <small id="setMsg" style="color:var(--mu)"></small>
+  </section>
+</div>
+
+
+</main>
+<script src="../assets/js/story-engine.js"></script>
+</body></html>
