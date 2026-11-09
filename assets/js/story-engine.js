@@ -232,7 +232,18 @@ function mgRender(){
 }
 function mgDownloadVideo(){if(!MG.blob)return;var a=document.createElement('a');a.href=URL.createObjectURL(MG.blob);a.download='motion-graphic.webm';document.body.appendChild(a);a.click();a.remove()}
 
-function initStoryEngine(){try{setMode(document.body.dataset.mode||'explainer')}catch(e){setMode('explainer')}}
+function initStoryEngine(){
+  var p=document.body.dataset.page||'';
+  if(p==='settings'){loadSettings();return}
+  if(p==='dashboard'){renderDashboard();return}
+  if(p==='motion'){try{wgb();wpv()}catch(e){};return}
+  try{
+    var o=JSON.parse(localStorage.getItem('se')||'{}');
+    if($('title'))$('title').value=o.t||'';
+    if($('js'))$('js').value=o.j||'';
+  }catch(e){}
+  try{setMode(document.body.dataset.mode||'explainer')}catch(e){setMode('explainer')}
+}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initStoryEngine)}else{initStoryEngine()}
 var SA=[],SD=[],SCU=[];
 function ps(){return !!D&&D.scenes.every(function(s,i){return SA[i]})}
