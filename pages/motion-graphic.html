@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Motion Graphic - Story Engine</title>
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../jszip.min.js"></script>
+</head><body >
+<aside class="sidebar">
+  <div class="brand">Story Engine</div>
+  <div class="brand-sub">AI Content Studio • Local</div>
+  <div class="nav-title">Content Factory</div>
+  <div class="nav">
+    <a href="dashboard.html">00 <span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></a>
+    <a href="explainer.html">01 <span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></a>
+    <a href="news.html">02 <span>NEWS<div class="desc">Berita + visualisasi AI</div></span></a>
+    <a href="drama-ai.html">03 <span>DRAMA AI<div class="desc">Cerita sinematik</div></span></a>
+    <a href="horror-ai.html">04 <span>HORROR AI<div class="desc">Cinematic horror</div></span></a>
+    <a href="psychology.html">05 <span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></a>
+    <a href="history-stickman.html">06 <span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></a>
+    <a href="motion-graphic.html">MG <span>MOTION GRAPHIC<div class="desc">Teks, shape & animasi</div></span></a>
+    <a href="settings.html">⚙ <span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></a>
+  </div>
+</aside>
+<main class="app-main">
+<div id="motionPage" class="page">
+<div class="modebar">
+  <div><h1>Motion Graphic</h1><p>Buat video motion graphic berbasis teks, shape, image, dan animasi secara lokal.</p></div>
+  <div class="mode-chip">MOTION GRAPHIC</div>
+</div>
+
+<section>
+<h2><span>1</span>Konten Motion Graphic</h2>
+<div class="grid">
+<label class="f">Judul<small>Judul utama project.</small><input id="mgTitle" placeholder="Mis. Kenapa Kita Sering Menunda?"></label>
+<label class="f">Durasi per scene<small>Durasi default dalam detik.</small><input id="mgDur" type="number" min="1" max="30" value="4"></label>
+<label class="f">Gaya animasi<small>Pilih karakter gerak teks.</small><select id="mgAnim"><option value="rise">Rise Up</option><option value="slide">Slide In</option><option value="pop">Pop</option><option value="type">Typewriter</option><option value="fade">Fade</option></select></label>
+<label class="f">Format<small>Ukuran output sosial media.</small><select id="mgFmt"><option value="ig">Instagram Reels 1080x1920</option><option value="tt">TikTok 1080x1920</option><option value="fb">Facebook Reels 1080x1920</option><option value="yt">YouTube Shorts 1080x1920</option><option value="sq">Square 1080x1080</option><option value="yl">YouTube 1920x1080</option></select></label>
+</div>
+<label class="f" style="margin-top:10px">Script / teks per scene<small>Satu scene per baris. Engine akan menganimasikan setiap baris.</small>
+<textarea id="mgScript" placeholder="Kenapa kita suka menunda?&#10;Otak mencari kepuasan instan.&#10;Tugas yang terasa berat membuat kita menghindar.&#10;Pecah tugas menjadi langkah kecil.&#10;Mulai sekarang, bukan nanti."></textarea>
+</label>
+<div class="row">
+<label class="f">Warna utama<small>Warna aksen motion.</small><input id="mgAccent" type="color" value="#0f766e"></label>
+<label class="f">Warna background<small>Background video.</small><input id="mgBg" type="color" value="#0d1514"></label>
+</div>
+<button onclick="mgPreview()">Preview Motion Graphic</button>
+</section>
+
+<section id="mgPreviewSection" style="display:none">
+<h2><span>2</span>Preview & Timeline</h2>
+<div class="row">
+<div style="flex:1;min-width:280px"><canvas id="mgCanvas" style="width:100%;max-height:560px;background:#000;border-radius:14px;display:block"></canvas></div>
+<div style="flex:1;min-width:280px">
+<div id="mgTimeline"></div>
+<p class="s" id="mgStatus" style="margin-top:10px">Preview siap.</p>
+<button onclick="mgRender()">Render Motion Graphic</button>
+<button class="g" id="mgDownload" style="display:none" onclick="mgDownloadVideo()">Download video</button>
+</div>
+</div>
+</section>
+</div>
+
+
+</main>
+<script src="../assets/js/story-engine.js"></script>
+</body></html>
