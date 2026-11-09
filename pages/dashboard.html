@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard - Story Engine</title>
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../jszip.min.js"></script>
+</head><body data-page="dashboard">
+<aside class="sidebar">
+  <div class="brand">Story Engine</div>
+  <div class="brand-sub">AI Content Studio • Local</div>
+  <div class="nav-title">Content Factory</div>
+  <div class="nav">
+    <a href="dashboard.html">00 <span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></a>
+    <a href="explainer.html">01 <span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></a>
+    <a href="news.html">02 <span>NEWS<div class="desc">Berita + visualisasi AI</div></span></a>
+    <a href="drama-ai.html">03 <span>DRAMA AI<div class="desc">Cerita sinematik</div></span></a>
+    <a href="horror-ai.html">04 <span>HORROR AI<div class="desc">Cinematic horror</div></span></a>
+    <a href="psychology.html">05 <span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></a>
+    <a href="history-stickman.html">06 <span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></a>
+    <a href="motion-graphic.html">MG <span>MOTION GRAPHIC<div class="desc">Teks, shape & animasi</div></span></a>
+    <a href="settings.html">⚙ <span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></a>
+  </div>
+</aside>
+<main class="app-main">
+<div id="dashboardPage" class="page">
+  <div class="modebar"><div><h1>Dashboard</h1><p>Semua video yang sudah berhasil di-generate dari seluruh menu.</p></div><div class="mode-chip">VIDEO LIBRARY</div></div>
+  <div class="dash-toolbar">
+    <button class="g" onclick="renderDashboard()">Refresh</button>
+    <button class="g" onclick="clearVideoLibrary()">Hapus semua</button>
+    <span class="video-sub" id="dashCount"></span>
+  </div>
+  <div id="dashList" class="dash-grid"></div>
+</div>
+
+</main>
+<script src="../assets/js/story-engine.js"></script>
+</body></html>

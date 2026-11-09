@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Motion Graphic - Story Engine</title>
+<link rel="stylesheet" href="../assets/css/app.css">
+<style>
+#ms .cv-wrap{background:#000;border-radius:14px;padding:0;display:flex;justify-content:center}
+#msCanvas{max-height:620px;max-width:100%;height:auto;width:auto;border-radius:14px;display:block}
+.ms-scene{border:1px solid var(--bd);border-radius:10px;padding:8px 10px;margin-top:6px;font-size:13px}
+.ms-scene b{color:var(--ac)} .ms-scene small{color:var(--mu)}
+.ms-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:10px}
+.ms-lib div{border:1px solid var(--bd);border-radius:10px;padding:6px;text-align:center;font-size:11px;background:var(--bg)}
+.ms-lib img{width:44px;height:44px;filter:invert(.55)}
+.ms-lib .x{color:#dc2626;cursor:pointer;font-weight:700}
+.ms-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.ms-bar input[type=range]{flex:1;min-width:140px;padding:0}
+.ms-bar button{margin-top:0}
+#msPrompt{display:none;min-height:140px}
+.ck{display:flex;gap:8px;align-items:center;font-weight:600;font-size:13px;margin-top:6px}
+.ck input{width:auto}
+.wb{width:36px;height:36px;padding:0;border-radius:8px;background:var(--soft);color:var(--ac);border:1px solid var(--bd);font-size:10px;margin:0}.wb.on{background:var(--ac);color:var(--on)}
+</style>
+</head><body data-page="motion">
+<aside class="sidebar">
+  <div class="brand">Story Engine</div>
+  <div class="brand-sub">AI Content Studio • Local</div>
+  <div class="nav-title">Content Factory</div>
+  <div class="nav">
+    <a href="dashboard.html">00 <span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></a>
+    <a href="explainer.html">01 <span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></a>
+    <a href="news.html">02 <span>NEWS<div class="desc">Berita + visualisasi AI</div></span></a>
+    <a href="drama-ai.html">03 <span>DRAMA AI<div class="desc">Cerita sinematik</div></span></a>
+    <a href="horror-ai.html">04 <span>HORROR AI<div class="desc">Cinematic horror</div></span></a>
+    <a href="psychology.html">05 <span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></a>
+    <a href="history-stickman.html">06 <span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></a>
+    <a href="motion-graphic.html">MG <span>MOTION GRAPHIC<div class="desc">Topik → naskah → video</div></span></a>
+    <a href="settings.html">⚙ <span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></a>
+  </div>
+</aside>
+<main class="app-main"><div id="ms" class="page">
+<div class="modebar">
+  <div><h1>Motion Graphic</h1><p>Ketik topik + pilih durasi. OpenAI menulis naskah, engine menyusun motion graphic, subtitle, voice over, dan avatar secara otomatis.</p></div>
+  <div class="mode-chip">MOTION STUDIO</div>
+</div>
+
+<section>
+<h2><span>1</span>Topik & Pengaturan</h2>
+<label class="f">Topik video<small>Contoh: Bagaimana air hujan bisa tercipta</small><input id="msTopic" placeholder="Bagaimana air hujan bisa tercipta"></label>
+<div class="grid">
+<label class="f">Durasi target<small>Durasi akhir mengikuti panjang voice over.</small><select id="msDur"><option value="30">30 detik</option><option value="45">45 detik</option><option value="60" selected>1 menit</option><option value="90">1,5 menit</option><option value="120">2 menit</option><option value="180">3 menit</option></select></label>
+<label class="f">Bahasa<small>Naskah & suara.</small><select id="msLang"><option value="id">Indonesia</option><option value="en">English</option></select></label>
+<label class="f">Format<small>Ukuran output sosial media.</small><select id="msFmt"><option value="ig">Instagram Reels 1080x1920</option><option value="tt">TikTok 1080x1920</option><option value="fb" selected>Facebook Reels 1080x1920</option><option value="ys">YouTube Shorts 1080x1920</option><option value="sq">Square 1080x1080</option><option value="yl">YouTube 1920x1080</option></select></label>
+<label class="f">Tema warna<small>Auto = dipilih OpenAI sesuai topik.</small><select id="msPal"></select></label>
+</div>
+<div class="grid">
+<label class="f">Mesin suara<small>Edge = online gratis, Offline = bawaan Python (pyttsx3).</small><select id="msEng"><option value="edge">Edge TTS (online, gratis)</option><option value="offline">Offline (pyttsx3)</option></select></label>
+<label class="f">Suara<small id="msVoiceHint">&nbsp;</small><select id="msVoice"></select></label>
+<label class="f">Kecepatan suara<small>0 = normal.</small><select id="msRate"><option value="-10">-10%</option><option value="0" selected>Normal</option><option value="10">+10%</option><option value="20">+20%</option></select></label>
+<label class="f">Posisi avatar<small>Avatar mulutnya mengikuti suara.</small><select id="msAvPos"><option value="right">Kanan</option><option value="left">Kiri</option><option value="off">Tanpa avatar</option></select></label>
+</div>
+<label class="ck"><input type="checkbox" id="msSub" checked> Subtitle</label>
+<label class="ck"><input type="checkbox" id="msSfx" checked> Efek suara (SFX dari library)</label>
+<div class="row" style="margin-top:6px">
+<button onclick="MS.generate()">Tulis Naskah dengan OpenAI</button>
+<button class="g" onclick="MS.showPrompt()">Mode manual: salin prompt</button>
+</div>
+<textarea id="msPrompt" readonly></textarea>
+<p class="err" id="msErr"></p>
+</section>
+
+<section>
+<h2><span>2</span>Naskah & Scene (JSON)</h2>
+<small style="color:var(--mu)">OpenAI mengisi kotak ini. Boleh diedit, atau tempel JSON dari ChatGPT (mode manual), lalu klik Terapkan.</small>
+<textarea id="msJson" style="min-height:220px" placeholder='{"title":"...","scenes":[...]}'></textarea>
+<div class="row"><button onclick="MS.applyJson()">Terapkan JSON</button><button class="g" onclick="MS.buildVoice()" id="msVoiceBtn">Buat Voice Over & Preview</button></div>
+<div id="msScenes"></div>
+<p class="s" id="msStatus"></p>
+</section>
+
+<section id="msPreview" style="display:none">
+<h2><span>3</span>Preview & Render</h2>
+<h3 style="font-size:15px;margin:4px 0 4px">Watermark (opsional)</h3>
+<div class="grid"><label class="f">Teks<small>mis. @namakanal</small><input id="wt" placeholder="@namakanal" oninput="wpv()"></label><label class="f">Logo (gambar)<small>PNG transparan paling bagus</small><input type="file" id="wf" accept="image/*" onchange="wl(this.files[0])"></label></div>
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin:12px 0 16px;align-items:flex-start">
+<div><div style="font-weight:600;font-size:13px;margin-bottom:6px">Posisi</div><div id="wg" style="display:grid;grid-template-columns:repeat(3,36px);gap:4px"></div><input type="hidden" id="wp" value="br"></div>
+<div style="flex:1;min-width:180px"><label class="f">Transparansi (opacity): <span id="wov">60</span>%<input id="wo" type="range" min="5" max="100" value="60" style="padding:0" oninput="$('wov').textContent=this.value;wpv()"></label><label class="f" style="margin-top:10px">Ukuran: <span id="wsv">5</span>%<input id="ws" type="range" min="2" max="15" value="5" style="padding:0" oninput="$('wsv').textContent=this.value;wpv()"></label></div>
+</div>
+<div class="row">
+<div style="flex:1;min-width:260px" class="cv-wrap"><canvas id="msCanvas"></canvas></div>
+<div style="flex:1;min-width:260px">
+<div class="ms-bar"><button id="msPlay" onclick="MS.toggle()">Putar</button><input id="msSeek" type="range" min="0" max="1000" value="0"><span id="msTime" class="s" style="margin:0">0:00</span></div>
+<div class="ms-bar" style="margin-top:12px">
+<button onclick="MS.render()">Render Video (dengan suara)</button>
+<button class="g" onclick="MS.srt()">Unduh SRT</button>
+</div>
+<p class="s" id="msRStatus" style="margin-top:10px">Render berjalan real-time (1 menit video = 1 menit). Biarkan tab ini tetap terbuka dan terlihat.</p>
+<div class="ms-bar" id="msDl" style="display:none"><button class="g" onclick="MS.dlWebm()">Download WebM</button><button class="g" onclick="MS.dlMp4()">Download MP4 (butuh ffmpeg)</button></div>
+</div>
+</div>
+</section>
+
+<section>
+<h2><span>4</span>Library Aset</h2>
+<small style="color:var(--mu)">Semua aset yang boleh dipilih OpenAI. Simpan hanya aset dengan lisensi jelas (CC0 / bebas komersial). Aset CC-BY: masukkan nama penulis di kolom Author.</small>
+<div id="msLib" class="ms-lib"></div>
+<div class="grid">
+<label class="f">File (SVG/PNG/WAV/MP3)<input type="file" id="msLFile" accept=".svg,.png,.webp,.jpg,.jpeg,.wav,.mp3,.ogg"></label>
+<label class="f">ID<small>huruf kecil, angka, _</small><input id="msLId" placeholder="awan_petir"></label>
+<label class="f">Tag<small>pisahkan spasi/koma</small><input id="msLTags" placeholder="awan petir badai"></label>
+<label class="f">Lisensi<input id="msLLic" placeholder="CC0-1.0"></label>
+<label class="f">Author / sumber<input id="msLAuth" placeholder="nama penulis atau URL"></label>
+</div>
+<label class="ck"><input type="checkbox" id="msLTint" checked> Ikon satu warna (diwarnai otomatis mengikuti tema)</label>
+<button onclick="MS.libAdd()">Tambah ke Library</button> <small id="msLMsg" style="color:var(--mu)"></small>
+</section>
+</div></main>
+<script src="../assets/js/story-engine.js"></script>
+<script src="../assets/js/motion-studio.js"></script>
+</body></html>
