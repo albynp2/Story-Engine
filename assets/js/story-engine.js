@@ -51,7 +51,7 @@ var p='File name: gambar'+(s.no||i+1)+'. '+($('style').value||d.style)+'. '+s.vi
 h+='<div class="sc"><b>Adegan '+(s.no||i+1)+'</b><textarea id="f'+i+'" readonly style="min-height:80px;margin-top:6px">'+p.replace(/</g,'&lt;')+'</textarea><div class="row" style="margin-top:6px"><button class="g" onclick="cp(\'f'+i+'\')">Copy prompt</button><input type="file" accept="image/*" onchange="im(this,'+i+')"></div><div class="s" style="margin:10px 0 4px"><b>Narasi:</b> '+String(s.narration).replace(/</g,'&lt;')+'</div><div class="row"><button class="g" onclick="cn('+i+')">Copy narasi</button><input type="file" accept="audio/*" onchange="sa(this.files[0],'+i+')"></div><small id="as'+i+'" style="color:var(--mu)"></small><img id="i'+i+'" style="display:none"></div>'});
 $('scenes').innerHTML=h;$('all').value=d.scenes.map(function(s,i){return '[gambar'+(s.no||i+1)+']\n'+$('f'+i).value}).join('\n\n');$('s3').style.display=$('s4').style.display='block';
 $('nar').value=d.scenes.map(function(s){return s.narration}).join('\n\n');updateSocial();srt()}
-var dz=$('dz');dz.ondragover=function(e){e.preventDefault()};dz.ondrop=function(e){e.preventDefault();fl(e.dataTransfer.files)};
+var dz=$('dz');if(dz){dz.ondragover=function(e){e.preventDefault()};dz.ondrop=function(e){e.preventDefault();fl(e.dataTransfer.files)}}
 function put(i,x){var m=$('i'+i);m.src=URL.createObjectURL(x.b);m.style.display='block';IB[i]=x;if(!$('n'+i))m.insertAdjacentHTML('afterend','<div class="s" id="n'+i+'"></div>');$('n'+i).textContent=x.n;wpv()}
 function fl(fs){var zm=$('zm');if(!D||typeof JSZip==='undefined'){zm.textContent=!D?'Generate dulu (langkah 2).':'JSZip gagal dimuat, coba refresh.';return}
 var jobs=[];Array.from(fs).forEach(function(f){if(/\.zip$/i.test(f.name)){jobs.push(JSZip.loadAsync(f).then(function(z){var ps=[];z.forEach(function(p,e){if(!e.dir&&/\.(png|jpe?g|webp)$/i.test(p)&&p.indexOf('__MACOSX')<0)ps.push(e.async('blob').then(function(b){return{n:p.split('/').pop(),b:b}}))});return Promise.all(ps)}))}else if(/^image\//.test(f.type))jobs.push([{n:f.name,b:f}])});
@@ -165,7 +165,7 @@ function tm(){var t=THM[$('theme').selectedIndex]||THM[0];$('thd').textContent=t
 function up(){if(!D)return;D.scenes.forEach(function(s,i){var t=$('f'+i);if(t)t.value=t.value.replace(/ (vertical 9:16|horizontal 16:9|square 1:1) aspect ratio, no text/,' '+AR()+', no text')});$('all').value=D.scenes.map(function(s,i){return '[gambar'+(s.no||i+1)+']\n'+$('f'+i).value}).join('\n\n')}
 function fm(){var f=FM[$('fmt').value];$('fmd').textContent=f.d;$('vf').textContent=f.n+' ('+f.w+'x'+f.h+')';up();wpv()}
 function rf(){tm();$('ev').value=$('lang').value==='en'?'en-US-GuyNeural':'id-ID-ArdiNeural';if($('p1').style.display==='block')mk1()}
-$('theme').innerHTML=THM.map(function(t){return '<option>'+t[1]+'</option>'}).join('');tm();fm();
+if($('theme')){$('theme').innerHTML=THM.map(function(t){return '<option>'+t[1]+'</option>'}).join('');tm();fm();}
 var WI=null,IB=[];
 var WPN={tl:'Kiri atas',tc:'Tengah atas',tr:'Kanan atas',ml:'Kiri tengah',mc:'Tengah',mr:'Kanan tengah',bl:'Kiri bawah',bc:'Tengah bawah',br:'Kanan bawah'};
 function wgb(){var h='';Object.keys(WPN).forEach(function(k){h+='<button class="wb'+($('wp').value===k?' on':'')+'" title="'+WPN[k]+'" aria-label="'+WPN[k]+'" onclick="wsp(\''+k+'\')">&#9679;</button>'});$('wg').innerHTML=h}
