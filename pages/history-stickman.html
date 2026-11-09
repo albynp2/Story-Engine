@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>History Stickman - Story Engine</title>
+<link rel="stylesheet" href="../assets/css/app.css">
+<script src="../jszip.min.js"></script>
+</head><body data-mode="history">
+<aside class="sidebar">
+  <div class="brand">Story Engine</div>
+  <div class="brand-sub">AI Content Studio • Local</div>
+  <div class="nav-title">Content Factory</div>
+  <div class="nav">
+    <a href="dashboard.html">00 <span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></a>
+    <a href="explainer.html">01 <span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></a>
+    <a href="news.html">02 <span>NEWS<div class="desc">Berita + visualisasi AI</div></span></a>
+    <a href="drama-ai.html">03 <span>DRAMA AI<div class="desc">Cerita sinematik</div></span></a>
+    <a href="horror-ai.html">04 <span>HORROR AI<div class="desc">Cinematic horror</div></span></a>
+    <a href="psychology.html">05 <span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></a>
+    <a href="history-stickman.html">06 <span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></a>
+    <a href="motion-graphic.html">MG <span>MOTION GRAPHIC<div class="desc">Teks, shape & animasi</div></span></a>
+    <a href="settings.html">⚙ <span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></a>
+  </div>
+</aside>
+<main class="app-main">
+<div id="studioPage" class="page active">
+<div class="modebar">
+  <div><h1 id="modeTitle">Story Engine</h1><p id="modeDesc">Ubah satu judul jadi video bergambar, lengkap dengan suara dan subtitle.</p></div>
+  <div class="mode-chip" id="modeChip">EXPLAINER</div>
+</div>
+
+
+<input type="hidden" id="mode" value="explainer">
+<section><h2><span>1</span>Judul &amp; prompt untuk ChatGPT</h2>
+<label class="f">Judul cerita<small>Ide ceritanya, satu kalimat cukup</small><input id="title" placeholder="Judul, mis. Ayah Aku Ternyata Seorang CEO"></label>
+<div id="newsContext">
+<label class="f">Konteks / bahan berita
+<small>Tempel ringkasan berita, fakta mentah, atau beberapa sumber. Untuk NEWS, engine akan memprioritaskan fakta yang diberikan dan tidak mengarang detail.</small>
+<textarea id="newsSource" placeholder="Tempel isi berita atau poin faktanya di sini..."></textarea>
+</label>
+</div>
+
+<div class="grid">
+<label class="f">Bahasa<small>Bahasa narasi, subtitle, dan isi JSON dari ChatGPT</small><select id="lang" onchange="rf()"><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></label>
+<label class="f">Jumlah adegan<small>1 adegan = 1 gambar dari Flow</small><select id="n" onchange="rf()"><option>6</option><option selected>8</option><option>10</option><option>12</option></select></label>
+<label class="f">Gaya tema<small id="thd"></small><select id="theme" onchange="rf()"></select></label>
+<label class="f">Format video<small id="fmd"></small><select id="fmt" onchange="fm()"><option value="tt">TikTok</option><option value="ig">Instagram Reels</option><option value="fb">Facebook Reels</option><option value="yt">YouTube Shorts</option><option value="yl">YouTube (landscape 16:9)</option><option value="sq">Persegi 1:1 (feed)</option></select></label>
+</div>
+<input id="style" placeholder="Tulis gaya visual sendiri (bahasa Inggris)" style="display:none;margin-top:10px">
+<button onclick="mk1()">Buat prompt</button>
+<textarea id="p1" readonly style="margin-top:8px;display:none"></textarea>
+<button class="g" id="c1" style="display:none;margin-top:6px" onclick="cp('p1')">Copy</button></section>
+
+<section><h2><span>2</span>Cerita JSON dari ChatGPT</h2><label class="f" style="max-width:360px">Cara dapat JSON<small>Manual: tempel balasan ChatGPT di kotak bawah. Otomatis: dikirim ke OpenAI lewat API.</small><select id="jm" onchange="jmd()"><option value="man">Manual (tempel dari ChatGPT)</option><option value="auto">Otomatis (API OpenAI)</option></select></label><div id="jauto" style="display:none"><button onclick="oa()">Buat cerita otomatis</button> <small id="oam" style="color:var(--mu)"></small><p class="s" style="margin:6px 0 0">API key dan model diambil dari Settings. Prompt dari langkah 1 dikirim ke OpenAI, balasannya langsung jadi prompt Flow di langkah 3. Butuh internet dan saldo API.</p></div>
+<textarea id="js" placeholder='{"title":...,"scenes":[...]}'></textarea>
+<button onclick="gen()">Generate</button> <span class="err" id="er"></span></section>
+
+<section id="s3" style="display:none"><h2><span>3</span>Prompt untuk Google Flow + upload gambar</h2><p class="s" style="margin:0 0 8px">Tiap prompt diawali nama file gambar1, gambar2, dan seterusnya. Kalau nama file dari Flow tetap acak, drag ZIP-nya ke sini lalu klik Simpan ZIP gambar bernomor.</p><textarea id="all" readonly style="min-height:90px"></textarea><button style="margin:6px 0 4px" onclick="cp('all')">Copy semua prompt</button><div id="dz" onclick="$('zf').click()" style="border:2px dashed var(--ac);border-radius:10px;padding:18px;text-align:center;margin:8px 0;cursor:pointer">Drag ZIP dari Flow ke sini (atau klik)<br><small id="zm" style="color:var(--mu)"></small></div><input id="zf" type="file" multiple accept=".zip,image/*" style="display:none" onchange="fl(this.files)"><label class="f" style="margin-top:8px">Cara baca gambar dari ZIP<small>Urut: file pertama jadi adegan 1, lanjut sampai adegan terakhir</small><select id="zmode"><option value="seq">Urut dari adegan 1 sampai akhir (disarankan)</option><option value="num">Cocokkan nomor di nama file</option></select></label><button class="g" style="margin-top:8px" onclick="ez()">Simpan ZIP gambar bernomor (gambar1, gambar2, ...)</button><div id="scenes"></div></section>
+
+<section id="s4" style="display:none"><h2><span>4</span>Voice over &amp; subtitle</h2>
+<p class="s" style="margin-bottom:6px">Naskah lengkap untuk Google AI Studio (TTS):</p>
+<textarea id="nar" readonly></textarea><button class="g" style="margin-top:6px" onclick="cp('nar')">Copy naskah</button><p class="s" style="margin:12px 0 6px"><b>Voice over per adegan (disarankan):</b> satu file audio per adegan, supaya durasi tiap gambar pas dengan narasinya. Pilih banyak file sekaligus atau satu ZIP, urut dari adegan 1 sampai akhir. Bisa juga upload per adegan di langkah 3.</p><input type="file" id="sbf" multiple accept="audio/*,.zip" onchange="sb(this.files)"> <button class="g" onclick="sx()">Hapus semua audio</button><small id="sbm" style="color:var(--mu)"></small><p class="s" style="margin:14px 0 6px">Atau satu file voice over untuk seluruh cerita (timing adegan diperkirakan dari jumlah kata):</p><input type="file" id="au" accept="audio/*,.wav,.mp3,.m4a" onchange="al(this.files[0])"><small id="am" style="color:var(--mu)"></small><details style="margin-top:10px"><summary style="cursor:pointer">Belum punya voice over? Pakai Edge TTS (gratis)</summary><p class="s" style="margin:8px 0">1) Install sekali: <code>pip install edge-tts</code><br>2) Copy naskah di atas, simpan sebagai <code>naskah.txt</code><br>3) Pilih suara, buat perintah, jalankan di terminal/CMD di folder yang sama<br>4) Upload <code>voiceover.mp3</code> di atas dan <code>voiceover.srt</code> di bawah</p><div class="row"><select id="ev"><option value="id-ID-ArdiNeural">Ardi (Indonesia, pria)</option><option value="id-ID-GadisNeural">Gadis (Indonesia, wanita)</option><option value="en-US-GuyNeural">Guy (English, pria)</option><option value="en-US-AriaNeural">Aria (English, wanita)</option></select><select id="er2"><option value="+0%">Kecepatan normal</option><option value="-10%">Lebih pelan</option><option value="+10%">Lebih cepat</option></select></div><button onclick="et2()">Generate suara per adegan (disarankan)</button> <button class="g" onclick="et()">Satu file untuk semua</button> <small id="em" style="color:var(--mu)"></small><p class="s" style="margin:8px 0 0">Atau manual lewat terminal:</p><button class="g" style="margin-top:6px" onclick="ec()">Buat perintah</button><textarea id="ecmd" readonly style="min-height:70px;margin-top:8px"></textarea><button class="g" style="margin-top:6px" onclick="cp('ecmd')">Copy perintah</button><p class="s" style="margin:12px 0 6px"><b>Per adegan (disarankan):</b> buat script yang menghasilkan adegan1.mp3, adegan2.mp3, dan seterusnya. Simpan sebagai <code>suara.py</code> (format UTF-8), jalankan <code>python suara.py</code>, lalu upload semua file mp3-nya di atas.</p><button onclick="ep()">Buat script per adegan</button><textarea id="epy" readonly style="min-height:120px;margin-top:8px"></textarea><button class="g" style="margin-top:6px" onclick="cp('epy')">Copy script</button></details><p class="s" style="margin:12px 0 6px">Opsional: upload subtitle (.srt/.vtt) dari Edge TTS biar timing pas dengan suara:</p><input type="file" id="sf" accept=".srt,.vtt" onchange="sl(this.files[0])"><small id="sm" style="color:var(--mu)"></small>
+<p class="s" style="margin:12px 0 6px">Subtitle SRT otomatis dari naskah, dipotong per adegan (durasi dari jumlah kata atau audio):</p>
+<div class="row"><label style="font-size:13px;color:var(--mu)">Kata per detik<input id="wps" type="number" step="0.1" value="2.5" oninput="srt()"></label><label style="font-size:13px;color:var(--mu)">Kata per subtitle (chunk)<input id="mw" type="number" min="1" max="30" value="8" oninput="srt()"></label></div>
+<button onclick="srt()">Perbarui SRT</button>
+<textarea id="sr" readonly style="margin-top:8px"></textarea><button class="g" style="margin-top:6px" onclick="cp('sr')">Copy SRT</button>
+<p class="s" style="margin-top:8px">Simpan hasil copy ke file .srt. Kalau durasi audio beda, ubah kata/detik lalu buat ulang.</p><section id="socialSection" style="display:none">
+<h2><span>5</span>Caption &amp; hashtag otomatis</h2>
+<p class="s">Dibuat otomatis dari hook/narasi pembuka yang sudah di-generate. Tinggal copy untuk upload.</p>
+<label class="f">Caption<small>Berbasis hook adegan pertama + konteks singkat.</small><textarea id="socialCaption" readonly></textarea></label>
+<button class="g" style="margin-top:6px" onclick="cp('socialCaption')">Copy caption</button>
+<label class="f" style="margin-top:12px">Hashtag<small>Disesuaikan dengan content type dan kata kunci dari judul/hook.</small><textarea id="socialHashtags" readonly style="min-height:70px"></textarea></label>
+<button class="g" style="margin-top:6px" onclick="cp('socialHashtags')">Copy hashtag</button>
+</section>
+<h2 style="margin-top:18px"><span>6</span>Buat video</h2><p class="s" style="margin-bottom:6px">Gabung gambar (langkah 3) + voice over + subtitle. Dirender real-time, jadi biarkan tab ini terbuka sampai selesai. Jumlah kata yang tampil per subtitle diatur di kolom Kata per subtitle (langkah 4). Kalau tiap adegan sudah punya audio, lama tiap gambar mengikuti durasi audio adegannya.</p><style>.wb{width:36px;height:36px;padding:0;border-radius:8px;background:var(--soft);color:var(--ac);border:1px solid var(--bd);font-size:10px;margin:0}.wb.on{background:var(--ac);color:var(--on)}</style><h3 style="font-size:15px;margin:16px 0 4px">Watermark (opsional)</h3>
+<div class="grid"><label class="f">Teks<small>mis. @namakanal</small><input id="wt" placeholder="@namakanal" oninput="wpv()"></label><label class="f">Logo (gambar)<small>PNG transparan paling bagus</small><input type="file" id="wf" accept="image/*" onchange="wl(this.files[0])"></label></div>
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;align-items:flex-start">
+<div><div style="font-weight:600;font-size:13px;margin-bottom:6px">Posisi</div><div id="wg" style="display:grid;grid-template-columns:repeat(3,36px);gap:4px"></div><input type="hidden" id="wp" value="br"></div>
+<div style="flex:1;min-width:180px"><label class="f">Transparansi (opacity): <span id="wov">60</span>%<input id="wo" type="range" min="5" max="100" value="60" style="padding:0" oninput="$('wov').textContent=this.value;wpv()"></label><label class="f" style="margin-top:10px">Ukuran: <span id="wsv">5</span>%<input id="ws" type="range" min="2" max="15" value="5" style="padding:0" oninput="$('wsv').textContent=this.value;wpv()"></label></div>
+<div><div style="font-weight:600;font-size:13px;margin-bottom:6px">Preview</div><canvas id="wpvc" style="max-width:100%;border-radius:12px;border:1px solid var(--bd)"></canvas></div></div>
+<p class="s" style="margin:14px 0 8px">Format video: <b id="vf"></b> (diubah di langkah 1)</p><label class="f" style="max-width:280px">Kualitas<small>720p lebih cepat, 1080p lebih tajam</small><select id="vq"><option value="0.6667" selected>HD 720p (cepat)</option><option value="1">Full HD 1080p</option></select></label><button id="vb" onclick="mkv()">Generate video</button> <small id="vm" style="color:var(--mu)"></small><video id="vv" controls playsinline style="width:100%;margin-top:8px;display:none;border-radius:8px"></video><button class="g" id="vd" style="display:none;margin-top:8px" onclick="vdl()">Download video (.webm)</button></section>
+
+</div>
+
+</main>
+<script src="../assets/js/story-engine.js"></script>
+</body></html>
