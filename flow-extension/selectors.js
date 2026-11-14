@@ -7,6 +7,9 @@ window.FLOW_SEL = {
   /* tombol generate (dicari lewat selector, lalu lewat teks/aria-label di bawah) */
   generateBtn: ['button[aria-label*="enerate" i]', 'button[aria-label*="reate" i]', 'button[type="submit"]'],
   generateText: /generate|create|buat|arrow_forward|send/i,
+  /* Mode wajib IMAGE. Ini hanya fallback selector; tidak pernah memilih tombol video. */
+  imageModeBtn: ['button[aria-label*="image" i][aria-pressed="true"]', 'button[aria-label*="image" i]', '[role="tab"][aria-label*="image" i]', '[role="tab"][aria-selected="true"]'],
+  imageModeText: /^(image|images|gambar)$/i,
   /* tombol project baru */
   newProjectBtn: ['button[aria-label*="new project" i]'],
   newProjectText: /new project|proyek baru|project baru/i,
