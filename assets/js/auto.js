@@ -62,7 +62,7 @@ function bkPrep() {
     }
     var ids = {};
     if ($('sfxSel') && $('sfxSel').value !== 'none') ids[$('sfxSel').value] = 1;
-    if (D && curStick()) D.scenes.forEach(function (s) { var x = String(s.sfx || '').toLowerCase(); if (x && x !== 'none') ids[x] = 1; });
+    if (D) D.scenes.forEach(function (s) {\n      var x = String(s.sfx || '').toLowerCase(); if (x && x !== 'none') ids[x] = 1;\n      (Array.isArray(s.sfx_events) ? s.sfx_events : []).forEach(function (e) { var id = String(e.id || '').toLowerCase(); if (id && id !== 'none') ids[id] = 1; });\n    });
     Object.keys(ids).forEach(function (id) {
       var a = libAssets('sfx').filter(function (x) { return x.id === id; })[0];
       if (a) jobs.push(decodeAsset(ctx, a).then(function (b) { SFXB[id] = b; }).catch(function () { }));
@@ -114,7 +114,23 @@ function bkStart(t0) {
   }
   var def = $('sfxSel') ? $('sfxSel').value : 'none';
   B.sc.forEach(function (s, i) {
-    var id = curStick() ? String((D.scenes[i] || {}).sfx || '').toLowerCase() : '';
+    var scene = D.scenes[i] || {};
+    var events = Array.isArray(scene.sfx_events) ? scene.sfx_events : [];
+    if (events.length) {
+      events.forEach(function (e) {
+        var id = String(e.id || '').toLowerCase();
+        if (!id || id === 'none' || !SFXB[id]) return;
+        var start = Math.max(0, parseFloat(e.start) || 0);
+        var dur = Math.max(0, parseFloat(e.duration) || 0);
+        var vol = Math.max(0.03, Math.min(1, parseFloat(e.volume) || 0.25));
+        var so = ac.createBufferSource(), sg = ac.createGain(); so.buffer = SFXB[id];
+        sg.gain.setValueAtTime(vol, t + s.s + start);
+        if (dur > 0) sg.gain.linearRampToValueAtTime(vol, t + s.s + start + Math.min(dur, 0.15));
+        so.connect(sg); sg.connect(B.dst); so.start(t + s.s + start);
+      });
+      return;
+    }
+    var id = curStick() ? String(scene.sfx || '').toLowerCase() : '';
     if (!id || id === 'none' || !SFXB[id]) id = (i > 0 && def !== 'none') ? def : '';
     if (!id || !SFXB[id]) return;
     var so = ac.createBufferSource(), sg = ac.createGain(); so.buffer = SFXB[id]; sg.gain.value = 0.6;
