@@ -263,7 +263,7 @@ function alog(m, cls) {
   b.appendChild(d); b.scrollTop = b.scrollHeight;
 }
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
-function jpost(u, o) { return fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o) }).then(function (r) { return r.json(); }); }
+function jpost(u, o) { return fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o) }).then(function (r) { return r.text().then(function (txt) { var j; try { j = JSON.parse(txt); } catch (e) { throw new Error('Server mengembalikan respons bukan JSON (HTTP ' + r.status + ').'); } if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status)); return j; }); }); }
 function setBusy(b) { AUTO.busy = b; $('autoGo').disabled = b; $('autoNext').disabled = b || AUTO.stage === 'script' || AUTO.stage === 'done'; }
 function autoStop() { AUTO.stop = true; if (AUTO.job) jpost('/api/flow/cancel', { id: AUTO.job }); alog('Dibatalkan.', 'err'); AUTO.busy = false; $('autoGo').disabled = false; }
 function autoStart() {
@@ -277,6 +277,7 @@ function autoResume() { if (AUTO.busy) return; AUTO.stop = false; autoRun(); }
 
 async function autoRun() {
   setBusy(true);
+  var stageTimer = setInterval(function () { if (AUTO.busy) alog('Masih bekerja pada tahap ' + AUTO.stage + '...'); }, 15000);
   try {
     var p = CONTENT[$('mode').value];
     if (AUTO.stage === 'research') {
@@ -346,7 +347,8 @@ async function autoRun() {
       alog($('vm').textContent, /Selesai/.test($('vm').textContent) ? 'ok' : 'err');
       AUTO.stage = 'done';
     }
-  } catch (e) { alog('Gagal: ' + e.message, 'err'); }
+  } catch (e) { alog('Gagal pada tahap ' + AUTO.stage + ': ' + e.message, 'err'); AUTO.stop = true; }
+  clearInterval(stageTimer);
   setBusy(false);
 }
 function missingScenes() {
