@@ -32,7 +32,7 @@ var CONTENT = {
     theme: 'Flat Vector',
     prompt: 'Explain one topic simply and accurately.\n' +
       'STRUCTURE: hook question -> why it matters -> how it works step by step -> relatable example -> surprising fact -> takeaway.\n' +
-      'RULE: each scene must visually show exactly what its narration explains. Keep one consistent visual system across scenes.'
+      'RULE: each scene must visually show exactly what its narration explains. Keep one consistent visual system across scenes.\n' +\n      'For every scene also plan a subtle local motion direction for the Story Engine (camera, pan, zoom, parallax, airflow, particle or object movement).\n' +\n      'For every scene provide timed SFX events that match the visual action and narration. Prefer reusable library IDs when appropriate: whoosh, pop, ding, click, success, rain, thunder, riser. Never invent audio filenames.'
   },
   drama: {
     title: 'Drama AI', chip: 'DRAMA AI',
@@ -138,7 +138,10 @@ function mk1() {
   }
   var sc = '"no":1,"narration":"voice-over text in ' + lang + '","visual":"image description in English: location, action, expression, camera angle","characters":["names in this scene"],"mood":""';
   if (profile.fact) sc += ',"fact_basis":""';
-  if (profile.stick) sc += ',"camera":"","reaction":"","sfx":""';
+  sc += ',"camera":"zoom_in|zoom_out|pan_left|pan_right|parallax|static"';
+  sc += ',"motion":"short description of how the still image should be animated locally"';
+  sc += ',"sfx_events":[{"start":0,"duration":0.8,"id":"whoosh","volume":0.25,"reason":"why this sound matches the action"}]';
+  if (profile.stick) sc += ',"reaction":"","sfx":""';
   var head = '"title":"","style":"","characters":[{"name":"","look":"fixed physical description and clothing, in English"}]';
   if (profile.fact) head += ',"sources":[{"name":"","year":""}],"notes":""';
   out.push('');
