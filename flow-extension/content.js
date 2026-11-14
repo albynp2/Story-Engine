@@ -53,6 +53,15 @@
     var c = findAll(S.newProjectBtn).concat(findByText(S.newProjectText));
     if (c.length) { c[0].click(); say('membuat project baru...'); await sleep(2500); }
   }
+  async function ensureImageMode() {
+    var active = findAll(S.imageModeBtn).filter(function (e) { return e.getAttribute('aria-pressed') === 'true' || e.getAttribute('aria-selected') === 'true'; });
+    if (active.length) return true;
+    var c = findAll(S.imageModeBtn).filter(function (e) { return /image|gambar/i.test(btnText(e)); });
+    if (!c.length) c = findByText(S.imageModeText);
+    if (c.length) { c[0].click(); say('mode IMAGE dipilih (storyboard)...'); await sleep(1200); return true; }
+    say('mode IMAGE tidak terdeteksi; tidak menekan tombol video');
+    return false;
+  }
   async function waitPromptBox(sec) {
     for (var i = 0; i < sec * 2; i++) { var b = promptBox(); if (b) return b; await sleep(500); }
     throw new Error('Kotak prompt Flow tidak ditemukan. Cek selectors.js.');
@@ -100,6 +109,7 @@
   async function runJob(job) {
     stopFlag = false; say('mengerjakan "' + job.title + '"');
     if (!job.done.length) await newProject();
+    await ensureImageMode();
     var todo = job.prompts.filter(function (p) { return job.done.indexOf(p.no) < 0; });
     for (var i = 0; i < todo.length; i++) {
       var st = await api('/api/flow/job?id=' + job.id);
