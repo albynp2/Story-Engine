@@ -239,10 +239,12 @@ function refreshLibSelects() {
 /* ---------- riset web (OpenAI web search) ---------- */
 function researchCall() {
   var t = $('title').value.trim(), s = getSettings();
-  return jpost('/api/research', { key: s.openaiKey || '', model: s.openaiModel || 'gpt-4o-mini', topic: t }).then(function (j) {
-    if (j.error) throw new Error(j.error);
-    return j;
-  });
+  var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 135000) : null;
+  return fetch('/api/research', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: s.openaiKey || '', model: s.openaiModel || 'gpt-4o-mini', topic: t }), signal: ctrl ? ctrl.signal : undefined })
+    .then(function (r) { return r.text().then(function (txt) { var j; try { j = JSON.parse(txt); } catch (e) { throw new Error('Respons server tidak valid (HTTP ' + r.status + ').'); } if (!r.ok || j.error) throw new Error(j.error || ('HTTP ' + r.status)); return j; }); })
+    .catch(function (e) { if (e && e.name === 'AbortError') throw new Error('Research timeout di browser setelah 135 detik. Coba lagi atau pilih sumber fakta manual.'); throw e; })
+    .finally(function () { if (timer) clearTimeout(timer); });
 }
 function doResearch() {
   var m = $('rsMsg'), t = $('title').value.trim();
@@ -283,7 +285,8 @@ async function autoRun() {
     if (AUTO.stage === 'research') {
       var fm = $('fsrc') ? $('fsrc').value : 'ai';
       if (fm === 'web') {
-        alog('Riset web (OpenAI web search), tunggu 30-90 detik...');
+        alog('Riset web (OpenAI web search) dimulai...');
+        alog('Tahap Research aktif. Jika tidak selesai, error akan ditampilkan otomatis.');
         var rj = await researchCall();
         $('newsSource').value = rj.text;
         if (rj.text.length < 300 || rj.sources.length === 0) throw new Error('Riset tidak menemukan cukup fakta/sumber untuk topik ini. Tempel bahan sendiri dan pilih "Pakai bahan yang gua tempel".');
