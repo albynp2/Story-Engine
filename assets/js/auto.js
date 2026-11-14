@@ -209,7 +209,7 @@ function audioHTML() {
 function autoHTML(p) {
   var h = '<section id="autoPanel"><h2><span>A</span>Mode otomatis</h2><div class="grid">' +
     '<label class="f">Durasi video<small>Jumlah adegan menyesuaikan</small><select id="dur" onchange="durChange()"><option value="1">1 menit</option><option value="3">3 menit</option><option value="5">5 menit</option></select></label>' +
-    '<label class="f">Sumber gambar<small>Ekstensi Flow otomatis atau upload sendiri</small><select id="isrc"><option value="flow">Google Flow (ekstensi otomatis)</option><option value="manual">Upload sendiri (langkah 3)</option></select></label>' +
+    '<label class="f">Sumber gambar<small>Google Flow hanya dipakai untuk <b>gambar storyboard</b>, bukan video berbayar</small><select id="isrc"><option value="flow">Google Flow — IMAGE ONLY</option><option value="manual">Upload sendiri (langkah 3)</option></select></label>' +
     '<label class="f">Suara narasi<small>Edge TTS otomatis atau upload dari Google AI Studio</small><select id="vmode"><option value="edge">Edge TTS otomatis (gratis)</option><option value="studio">Upload dari Google AI Studio</option></select></label>' +
     (p.fact ? '<label class="f">Sumber fakta<small>Naskah hanya boleh memakai fakta dari sini</small><select id="fsrc"><option value="web">Riset web otomatis (disarankan)</option><option value="paste">Pakai bahan yang gua tempel</option><option value="ai">Pengetahuan AI saja (berisiko mengarang)</option></select></label>' : '') +
     (p.characters ? '<label class="f">Karakter (opsional)<small>Dari Settings. Boleh pilih lebih dari satu (Ctrl/Cmd).</small><select id="chSel" multiple size="3" onchange="mk1()"></select></label>' : '') +
