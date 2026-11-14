@@ -1,6 +1,6 @@
 # Story Engine (lokal)
 
-Topik satu kalimat → naskah (OpenAI) → gambar (Google Flow via ekstensi) → suara (Edge TTS atau upload dari Google AI Studio) → subtitle → video, dengan backsound, SFX, dan statistik di Dashboard.
+Topik satu kalimat → naskah/storyboard (OpenAI) → gambar storyboard (Google Flow via ekstensi, IMAGE ONLY) → suara (Edge TTS atau Google AI Studio) → subtitle + timed SFX → motion lokal → video, dengan backsound dan statistik di Dashboard.
 
 ## Jalankan
 - Windows: klik `start.bat`  ·  Mac/Linux: `./start.sh`  ·  Docker: `docker build -t story-engine . && docker run -p 8000:8000 story-engine`
@@ -51,7 +51,8 @@ Upload sekali di **Settings**, pilih di tiap menu. Volume saat narasi diatur (de
 - **Chrome**: `chrome://extensions` → Developer mode → Load unpacked → folder `flow-extension`.
 - **Firefox**: `about:debugging` → This Firefox → Load Temporary Add-on → `flow-extension-firefox/manifest.json` (izinkan akses situs di about:addons).
 - Login Google Flow, biarkan tab terbuka. Status "Ekstensi Flow" di sidebar jadi hijau.
-- Tiap job membuka project baru di Flow, lalu membuat gambar satu per satu.
+- Tiap job membuka project baru di Flow, lalu membuat **gambar storyboard satu per satu**. Engine tidak meminta video generation dari Flow, sehingga tombol/aksi yang memakai kredit video tidak menjadi bagian pipeline.
+- Setiap scene dapat membawa `camera`, `motion`, dan `sfx_events`; Story Engine memakai metadata itu saat render lokal untuk memberi gerakan pada gambar dan menempatkan SFX pada waktu yang ditentukan.
 - **Kalau macet**: ubah `selectors.js` (kotak prompt, tombol generate, project baru, batas waktu).
 
 ## Karakter Drama (konsistensi wajah)
