@@ -47,6 +47,10 @@ def _oa_post(path, payload, key, timeout=180):
         except Exception:
             msg = str(e)
         raise OAError(msg, e.code)
+    except socket.timeout:
+        raise OAError("OpenAI timeout: respons tidak diterima dalam batas waktu. Coba lagi atau gunakan bahan faktual manual.")
+    except TimeoutError:
+        raise OAError("OpenAI timeout: respons tidak diterima dalam batas waktu. Coba lagi atau gunakan bahan faktual manual.")
     except urllib.error.URLError as e:
         raise OAError("Tidak bisa menghubungi OpenAI: %s" % e.reason)
 
@@ -90,7 +94,7 @@ def research(d):
     err = None
     for tool in ("web_search", "web_search_preview"):
         try:
-            j = _oa_post("/responses", {"model": model, "tools": [{"type": tool}], "input": prompt}, key, timeout=240)
+            j = _oa_post("/responses", {"model": model, "tools": [{"type": tool}], "input": prompt}, key, timeout=120)
             break
         except OAError as e:
             err = e
