@@ -62,7 +62,10 @@ function bkPrep() {
     }
     var ids = {};
     if ($('sfxSel') && $('sfxSel').value !== 'none') ids[$('sfxSel').value] = 1;
-    if (D) D.scenes.forEach(function (s) {\n      var x = String(s.sfx || '').toLowerCase(); if (x && x !== 'none') ids[x] = 1;\n      (Array.isArray(s.sfx_events) ? s.sfx_events : []).forEach(function (e) { var id = String(e.id || '').toLowerCase(); if (id && id !== 'none') ids[id] = 1; });\n    });
+    if (D) D.scenes.forEach(function (s) {
+      var x = String(s.sfx || '').toLowerCase(); if (x && x !== 'none') ids[x] = 1;
+      (Array.isArray(s.sfx_events) ? s.sfx_events : []).forEach(function (e) { var id = String(e.id || '').toLowerCase(); if (id && id !== 'none') ids[id] = 1; });
+    });
     Object.keys(ids).forEach(function (id) {
       var a = libAssets('sfx').filter(function (x) { return x.id === id; })[0];
       if (a) jobs.push(decodeAsset(ctx, a).then(function (b) { SFXB[id] = b; }).catch(function () { }));
