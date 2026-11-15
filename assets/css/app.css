@@ -46,7 +46,6 @@ body{display:flex;min-height:100vh}
   .nav .desc{display:none}
   .app-main{margin-left:0!important;width:100%;padding:14px}
 }
-<style>
 .page{display:none}.page.active{display:block}
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
 .video-card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px}

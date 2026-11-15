@@ -1,0 +1,36 @@
+/* Fact Explainer - hanya dipakai pages/fact-explainer.html. Memakai variabel tema yang sudah ada. */
+.fx-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:2px 0 14px;color:var(--mu);font-size:12px}
+.fx-meta b{color:var(--tx);font-weight:600}
+.fx-overall{margin-bottom:12px}
+.fx-overall-txt{margin-top:6px;font-size:12px;color:var(--mu)}
+.fx-overall-txt b{color:var(--tx)}
+.fx-bar{height:6px;border-radius:99px;background:#0a121a;border:1px solid var(--bd);overflow:hidden}
+.fx-bar.big{height:10px}
+.fx-bar i{display:block;height:100%;background:linear-gradient(90deg,#f04452,#8d1f31);border-radius:99px;transition:width .4s}
+.fx-bar.ok i{background:linear-gradient(90deg,#32d49a,#1f8a66)}
+.fx-error{margin:10px 0;padding:12px;border:1px solid #632b37;background:#2a1a22;border-radius:10px;color:#ffb3bb;font-size:13px}
+.fx-error b{color:#ff7683;letter-spacing:.4px}
+.fx-stages{display:grid;gap:8px}
+.fx-st{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:#0a121a}
+.fx-st.running{border-color:#632b37;background:linear-gradient(90deg,#241821,#0a121a)}
+.fx-st.done{border-color:#1f4a3d}
+.fx-st.failed{border-color:#7a2a36}
+.fx-st.needs_review{border-color:#5b4a22}
+.fx-ic{font:700 14px ui-monospace,monospace;text-align:center;color:var(--mu)}
+.fx-st.done .fx-ic{color:var(--ok)}
+.fx-st.running .fx-ic{color:#ff6773}
+.fx-st.failed .fx-ic{color:#ff7683}
+.fx-st.needs_review .fx-ic{color:#e8b84a}
+.fx-nm{font-weight:600;font-size:13px}
+.fx-sub{font-size:11px;color:var(--mu);margin-top:2px;overflow-wrap:anywhere}
+.fx-sub.err{color:#ff7683}
+.fx-st .fx-bar{margin-top:6px}
+.fx-act button{margin:0;padding:5px 11px;font-size:12px}
+.fx-act small{color:var(--mu);font-size:11px}
+.fx-proj{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:12px;border:1px solid var(--bd);border-radius:12px;background:#0a121a;margin-top:8px;cursor:pointer}
+.fx-proj:hover{border-color:#34404d}
+.fx-proj.sel{border-color:#632b37}
+.fx-proj .t{font-weight:700;overflow-wrap:anywhere}
+.fx-proj .s{font-size:11px;color:var(--mu)}
+.fx-proj .fx-bar{grid-column:1/-1}
+@media(max-width:900px){.fx-st{grid-template-columns:28px 1fr}.fx-act{grid-column:2}}

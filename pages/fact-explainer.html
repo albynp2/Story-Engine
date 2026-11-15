@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="rrs"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fact Explainer - Story Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/css/app.css">
+<link rel="stylesheet" href="../assets/css/rrs.css">
+<link rel="stylesheet" href="../assets/css/fact.css">
+<script defer src="../assets/js/layout.js"></script>
+<script defer src="../assets/js/fact-explainer.js"></script>
+</head><body data-page="fact">
+<div class="shell"><aside class="sidebar" id="sidebar"></aside>
+<div class="main"><header class="topbar" id="topbar"></header>
+<main class="content app-main">
+<div class="modebar"><div><h1>Fact Explainer</h1><p>Video explainer berbasis fakta: setiap klaim di naskah harus bisa ditelusuri ke sumbernya. OpenAI hanya menulis naskah, bukan sumber fakta.</p></div><div class="mode-chip">FACT-BASED</div></div>
+
+<div class="settings-note" id="fxNote"><b>Status versi ini:</b> form topik, penyimpanan project di disk, dan panel progress sudah aktif. Tahap Research sampai QC ditambahkan bertahap; tahap yang belum tersedia ditandai jelas dan tidak akan dijalankan diam-diam.</div>
+
+<section id="fxNew"><h2><span>1</span>Project baru</h2>
+<label class="f">Judul / topik<small>Spesifik dan nyata, minimal 3 kata. Contoh: Sejarah Kadupandak Cianjur</small><input id="fxTopic" maxlength="200" placeholder="mis. Sejarah Kadupandak Cianjur"></label>
+<div class="grid">
+<label class="f">Bahasa<small>Bahasa narasi dan subtitle</small><select id="fxLang"></select></label>
+<label class="f">Target durasi (detik)<small>15 sampai 300</small><input id="fxDur" type="number" min="15" max="300" value="60"></label>
+<label class="f">Jumlah scene<small id="fxPer">Rata-rata detik per scene</small><input id="fxScenes" type="number" min="3" max="40" value="9"></label>
+<label class="f">Platform<small>Semua platform ini 9:16</small><select id="fxPlat"></select></label>
+<label class="f">Resolusi<small>Bisa diubah nanti saat render</small><select id="fxRes"></select></label>
+<label class="f">Style video<small>Gaya visual dan penyampaian</small><input id="fxStyle" maxlength="80" value="Educational Explainer"></label>
+<label class="f">Target audience<small>Untuk siapa video ini</small><input id="fxAud" maxlength="80" value="General audience"></label>
+</div>
+<div class="row" style="margin-top:12px;align-items:center"><button id="fxCreate">Buat project</button></div>
+<div class="err" id="fxErr" role="alert" style="margin-top:8px"></div>
+</section>
+
+<section style="margin-top:14px"><h2><span>2</span>Project saya</h2><div id="fxList"><div class="empty">Memuat...</div></div></section>
+
+<section id="fxDetail" style="margin-top:14px;display:none">
+<div class="dash-toolbar"><h2 style="margin:0;flex:1"><span>3</span><b id="fxTitle">Project</b></h2><span class="badge" id="fxState"></span><button class="g" id="fxDel">Hapus project</button></div>
+<div class="fx-meta" id="fxMeta"></div>
+<div class="fx-overall"><div class="fx-bar big"><i id="fxBarAll" style="width:0%"></i></div>
+<div class="fx-overall-txt" id="fxOverallTxt"></div></div>
+<div class="fx-error" id="fxStageErr" role="alert" style="display:none"></div>
+<div class="fx-stages" id="fxStages"></div>
+<p class="subtle" style="margin:10px 0 0" id="fxPath"></p>
+</section>
+</main></div></div>
+</body></html>

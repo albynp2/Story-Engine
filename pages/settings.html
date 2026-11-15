@@ -1,47 +1,55 @@
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8">
+<html lang="id" data-theme="rrs"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Settings - Story Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="../assets/css/app.css">
-<script src="../jszip.min.js"></script>
+<link rel="stylesheet" href="../assets/css/rrs.css">
+<script defer src="../jszip.min.js"></script>
+<script defer src="../assets/js/modes.js"></script>
+<script defer src="../assets/js/story-engine.js"></script>
+<script defer src="../assets/js/layout.js"></script>
+<script defer src="../assets/js/auto.js"></script>
+<script defer src="../assets/js/settings.js"></script>
 </head><body data-page="settings">
-<aside class="sidebar">
-  <div class="brand">Story Engine</div>
-  <div class="brand-sub">AI Content Studio • Local</div>
-  <div class="nav-title">Content Factory</div>
-  <div class="nav">
-    <a href="dashboard.html">00 <span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></a>
-    <a href="explainer.html">01 <span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></a>
-    <a href="news.html">02 <span>NEWS<div class="desc">Berita + visualisasi AI</div></span></a>
-    <a href="drama-ai.html">03 <span>DRAMA AI<div class="desc">Cerita sinematik</div></span></a>
-    <a href="horror-ai.html">04 <span>HORROR AI<div class="desc">Cinematic horror</div></span></a>
-    <a href="psychology.html">05 <span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></a>
-    <a href="history-stickman.html">06 <span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></a>
-    <a href="motion-graphic.html">MG <span>MOTION GRAPHIC<div class="desc">Teks, shape & animasi</div></span></a>
-    <a href="settings.html">⚙ <span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></a>
-  </div>
-</aside>
-<main class="app-main">
-<div id="settingsPage" class="page">
-  <div class="modebar"><div><h1>Settings</h1><p>Konfigurasi yang dipakai bersama oleh semua content menu.</p></div><div class="mode-chip">CONFIG</div></div>
-  <section>
-    <h2><span>1</span>OpenAI API</h2>
-    <div class="settings-note">API key tidak lagi ditampilkan di halaman generator. Untuk keamanan, key hanya disimpan di browser lokal laptop ini dan dikirim ke server lokal saat fitur OpenAI dipakai.</div>
-    <label class="f">OpenAI API Key<small>Contoh: sk-... • kosongkan jika memakai environment variable OPENAI_API_KEY di server.</small>
-      <input id="setOpenAIKey" type="password" placeholder="sk-..." autocomplete="off">
-    </label>
-    <label class="f" style="margin-top:12px">Model<small>Model OpenAI yang digunakan untuk membuat cerita JSON.</small>
-      <input id="setOpenAIModel" value="gpt-4o-mini">
-    </label>
-    <div class="row" style="margin-top:8px">
-      <button onclick="saveSettings()">Simpan Settings</button>
-      <button class="g" onclick="clearOpenAIKey()">Hapus API Key</button>
-    </div>
-    <small id="setMsg" style="color:var(--mu)"></small>
-  </section>
-</div>
+<div class="shell"><aside class="sidebar" id="sidebar"></aside>
+<div class="main"><header class="topbar" id="topbar"></header>
+<main class="content app-main">
+<div class="modebar"><div><h1>Settings</h1><p>Konfigurasi bersama untuk semua menu.</p></div><div class="mode-chip">CONFIG</div></div>
+<section><h2>Status sistem</h2><div id="stBox"></div><button class="g" style="margin-top:10px" onclick="sePoll()">Periksa ulang</button></section>
+<section style="margin-top:14px"><h2>OpenAI API</h2>
+<div class="settings-note">Key hanya disimpan di browser lokal laptop ini dan dikirim ke server lokal saat OpenAI dipakai. Kosongkan jika memakai environment variable OPENAI_API_KEY di server.</div>
+<label class="f">OpenAI API Key<input id="setOpenAIKey" type="password" placeholder="sk-..." autocomplete="off"></label>
+<label class="f" style="margin-top:12px">Model<small>Dipakai untuk menulis naskah JSON.</small><input id="setOpenAIModel" value="gpt-4o-mini"></label>
+<div class="row" style="margin-top:8px"><button onclick="saveSettings()">Simpan Settings</button><button class="g" onclick="clearOpenAIKey()">Hapus API Key</button></div><small id="setMsg" class="subtle"></small></section>
+<section style="margin-top:14px"><h2>Backsound (musik latar)</h2><p class="subtle" style="margin:0 0 10px">Upload sekali di sini, lalu pilih di tiap menu. Volume otomatis turun saat narasi (ducking). Pakai musik yang memang boleh dipakai di video yang akan lu publish.</p>
+<div id="libBgm"></div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)"><div class="grid">
+<label class="f">Nama<input id="n_bgm" placeholder="nama singkat"></label>
+<label class="f">File<input type="file" id="f_bgm" accept="audio/*"></label><label class="f">Tag (opsional)<input id="t_bgm" placeholder="mis. santai, epic, sedih"></label></div>
+<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0;font-size:12px"><input type="checkbox" id="l_bgm" style="width:auto;margin-top:3px"> Gua punya hak pakai file ini (buatan sendiri, bebas hak cipta, atau lisensi mengizinkan)</label><input id="lic_bgm" placeholder="Lisensi / sumber (mis. CC0, Pixabay, buatan sendiri)" style="margin-bottom:8px"><button onclick="libUpload('bgm')">Upload Backsound</button> <span class="err" id="m_bgm"></span></div></section><section style="margin-top:14px"><h2>SFX (efek suara)</h2><p class="subtle" style="margin:0 0 10px">Bawaan: pop, ding, whoosh, dll. Tambah sendiri kalau perlu. Dipakai tiap pergantian adegan, dan di Stickman dipilih AI per adegan (nama: whoosh, pop, ding, click, riser, success).</p>
+<div id="libSfx"></div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)"><div class="grid">
+<label class="f">Nama<input id="n_sfx" placeholder="nama singkat"></label>
+<label class="f">File<input type="file" id="f_sfx" accept="audio/*"></label></div>
+<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0;font-size:12px"><input type="checkbox" id="l_sfx" style="width:auto;margin-top:3px"> Gua punya hak pakai file ini (buatan sendiri, bebas hak cipta, atau lisensi mengizinkan)</label><input id="lic_sfx" placeholder="Lisensi / sumber (mis. CC0, Pixabay, buatan sendiri)" style="margin-bottom:8px"><button onclick="libUpload('sfx')">Upload SFX</button> <span class="err" id="m_sfx"></span></div></section><section style="margin-top:14px"><h2>Template meme / reaksi (Stickman)</h2><p class="subtle" style="margin:0 0 10px">Muncul sebentar di pojok saat adegan punya reaksi yang cocok. Isi tag dengan salah satu: shock, facepalm, laugh, think, cry, mindblown, sus. Pakai gambar yang lu punya hak pakainya.</p>
+<div id="libMeme"></div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)"><div class="grid">
+<label class="f">Nama<input id="n_meme" placeholder="nama singkat"></label>
+<label class="f">File<input type="file" id="f_meme" accept="image/png,image/jpeg,image/webp"></label><label class="f">Tag reaksi<input id="t_meme" placeholder="shock"></label></div>
+<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0;font-size:12px"><input type="checkbox" id="l_meme" style="width:auto;margin-top:3px"> Gua punya hak pakai file ini (buatan sendiri, bebas hak cipta, atau lisensi mengizinkan)</label><input id="lic_meme" placeholder="Lisensi / sumber (mis. CC0, Pixabay, buatan sendiri)" style="margin-bottom:8px"><button onclick="libUpload('meme')">Upload Template meme / reaksi</button> <span class="err" id="m_meme"></span></div></section><section style="margin-top:14px"><h2>Karakter Drama AI (referensi wajah)</h2><p class="subtle" style="margin:0 0 10px">Disarankan: buat karakter fiktif dulu (character sheet) di Flow/Gemini, lalu upload di sini. Deskripsi tampilan akan disalin kata demi kata ke tiap prompt, dan gambar dikirim ke Flow sebagai referensi jika ekstensi mendukung. Jangan pakai foto orang lain tanpa izin.</p>
+<div id="libChar"></div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)"><div class="grid">
+<label class="f">Nama<input id="n_char" placeholder="nama singkat"></label>
+<label class="f">File<input type="file" id="f_char" accept="image/png,image/jpeg,image/webp"></label><label class="f" style="grid-column:1/-1">Deskripsi tampilan<textarea id="d_char" style="min-height:70px" placeholder="mis. wanita 28 tahun, rambut hitam sebahu, mata cokelat, jaket denim biru, senyum hangat"></textarea></label></div>
+<button onclick="libUpload('char')">Upload Karakter Drama AI</button> <span class="err" id="m_char"></span></div></section>
+<section style="margin-top:14px"><h2>Ekstensi Google Flow</h2>
+<ol class="subtle" style="line-height:1.7;margin:0;padding-left:18px">
+<li>Chrome: buka <b>chrome://extensions</b>, aktifkan <b>Developer mode</b>, klik <b>Load unpacked</b>, pilih folder <b>flow-extension</b> di project ini.</li>
+<li>Firefox: buka <b>about:debugging</b> → This Firefox → Load Temporary Add-on → pilih file <b>manifest.json</b> di folder <b>flow-extension-firefox</b> (izinkan akses situs di about:addons → ekstensi → Permissions).</li>
+<li>Login ke Google Flow di browser itu dan biarkan tab-nya terbuka.</li>
+<li>Status "Ekstensi Flow" di sidebar akan hijau. Lalu klik Generate otomatis di menu Explainer / Drama AI / Stickman.</li>
+</ol><p class="subtle" style="margin:10px 0 0">Selector tombol Flow bisa berubah kapan saja. Kalau macet, ubah <b>flow-extension/selectors.js</b>.</p></section>
 
-
-</main>
-<script src="../assets/js/story-engine.js"></script>
+</main></div></div>
 </body></html>

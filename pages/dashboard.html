@@ -1,37 +1,29 @@
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8">
+<html lang="id" data-theme="rrs"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dashboard - Story Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="../assets/css/app.css">
-<script src="../jszip.min.js"></script>
+<link rel="stylesheet" href="../assets/css/rrs.css">
+<script defer src="../jszip.min.js"></script>
+<script defer src="../assets/js/modes.js"></script>
+<script defer src="../assets/js/story-engine.js"></script>
+<script defer src="../assets/js/layout.js"></script>
+<script defer src="../assets/js/dashboard.js"></script>
 </head><body data-page="dashboard">
-<aside class="sidebar">
-  <div class="brand">Story Engine</div>
-  <div class="brand-sub">AI Content Studio • Local</div>
-  <div class="nav-title">Content Factory</div>
-  <div class="nav">
-    <a href="dashboard.html">00 <span>DASHBOARD<div class="desc">Semua video tersimpan</div></span></a>
-    <a href="explainer.html">01 <span>EXPLAINER<div class="desc">Jelaskan sesuatu</div></span></a>
-    <a href="news.html">02 <span>NEWS<div class="desc">Berita + visualisasi AI</div></span></a>
-    <a href="drama-ai.html">03 <span>DRAMA AI<div class="desc">Cerita sinematik</div></span></a>
-    <a href="horror-ai.html">04 <span>HORROR AI<div class="desc">Cinematic horror</div></span></a>
-    <a href="psychology.html">05 <span>PSYCHOLOGY<div class="desc">Visualisasi pikiran</div></span></a>
-    <a href="history-stickman.html">06 <span>HISTORY STICKMAN<div class="desc">Sejarah gaya stickman</div></span></a>
-    <a href="motion-graphic.html">MG <span>MOTION GRAPHIC<div class="desc">Teks, shape & animasi</div></span></a>
-    <a href="settings.html">⚙ <span>SETTINGS<div class="desc">OpenAI & konfigurasi</div></span></a>
-  </div>
-</aside>
-<main class="app-main">
-<div id="dashboardPage" class="page">
-  <div class="modebar"><div><h1>Dashboard</h1><p>Semua video yang sudah berhasil di-generate dari seluruh menu.</p></div><div class="mode-chip">VIDEO LIBRARY</div></div>
-  <div class="dash-toolbar">
-    <button class="g" onclick="renderDashboard()">Refresh</button>
-    <button class="g" onclick="clearVideoLibrary()">Hapus semua</button>
-    <span class="video-sub" id="dashCount"></span>
-  </div>
-  <div id="dashList" class="dash-grid"></div>
-</div>
-
-</main>
-<script src="../assets/js/story-engine.js"></script>
+<div class="shell"><aside class="sidebar" id="sidebar"></aside>
+<div class="main"><header class="topbar" id="topbar"></header>
+<main class="content app-main">
+<div class="modebar"><div><h1>Dashboard</h1><p>Statistik pembuatan video dan semua video yang tersimpan, dikelompokkan per menu dan tanggal.</p></div><div class="mode-chip">STATISTIK</div></div>
+<div class="stats-grid">
+<div class="stat-card"><small>Hari ini</small><b id="stToday">0</b></div>
+<div class="stat-card"><small>7 hari terakhir</small><b id="stWeek">0</b></div>
+<div class="stat-card"><small>Bulan ini</small><b id="stMonth">0</b></div>
+<div class="stat-card"><small>Total video dibuat</small><b id="stAll">0</b></div></div>
+<section><h2>Video dibuat per hari (14 hari terakhir)</h2><div class="bars" id="dChart"></div><p class="subtle" style="margin:8px 0 0">Statistik dihitung dari catatan pembuatan, jadi tetap tercatat walau videonya sudah dihapus dari daftar.</p></section>
+<section style="margin-top:14px"><h2>Total per menu</h2>
+<div class="row" style="margin-bottom:10px;align-items:end"><label class="f">Dari tanggal<input type="date" id="dFrom" onchange="renderDashboard()"></label><label class="f">Sampai tanggal<input type="date" id="dTo" onchange="renderDashboard()"></label><button class="g" onclick="$('dFrom').value='';$('dTo').value='';renderDashboard()">Reset filter</button></div>
+<div class="menu-split" id="dSplit"></div><p class="subtle" id="dCount" style="margin:8px 0 0"></p></section>
+<section style="margin-top:14px"><div class="dash-toolbar"><h2 style="margin:0;flex:1">Video tersimpan</h2><button class="g" onclick="clearVideoLibrary()">Hapus semua video</button></div><div id="dashList"></div></section>
+</main></div></div>
 </body></html>
