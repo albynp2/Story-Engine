@@ -70,8 +70,6 @@ check("no license refused", "error" in post("/api/library/add", {"id": "abc_y", 
 post("/api/library/delete", {"id": "tes_bgm"}); post("/api/library/delete", {"id": "tes_char"})
 idx = json.loads(get("/library/index.json")[1])
 check("cleanup", not any(a["id"].startswith("tes_") for a in idx["assets"]))
-<<<<<<< HEAD
-=======
 
 # ---------- Freesound (server palsu, tanpa internet) ----------
 from http.server import BaseHTTPRequestHandler
@@ -183,7 +181,6 @@ check("riset: fallback ke web_search_preview", r.get("text") and CALLS[-1][1]["t
 OA.reject_new = False
 check("riset: respons kosong ditolak", "tidak mengembalikan teks" in post("/api/research", {"key": "sk-good", "topic": "topik kosong sekali"})[0].get("error", ""))
 check("openai chat masih jalan", post("/openai", {"key": "sk-good", "prompt": "x"})[0].get("text") == "{\"ok\":1}")
->>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 import shutil
 shutil.rmtree(os.path.join(server.ROOT, "data"), ignore_errors=True)
 print("SEMUA LULUS" if ok else "ADA YANG GAGAL")
