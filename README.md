@@ -16,7 +16,6 @@ Topik satu kalimat → naskah/storyboard (OpenAI) → gambar storyboard (Google 
 | **Drama AI** | Sama seperti Explainer tapi **fiksi** dengan karakter AI konsisten (karakter dari Settings). |
 | **Stickman** | Stickman cepat + lucu: hook di adegan 1, wajah ekspresif, reaksi meme, kamera cepat (zoom/shake/whip/pan), subtitle besar kuning huruf besar, SFX per adegan. |
 | **Fact Explainer** | Video explainer berbasis fakta (menu baru, bertahap). Project disimpan sebagai folder di `data/projects/<id>/` (`project.json`, `research/`, `script/`, `storyboard/`, `prompts/`, `references/`, `videos/`, `audio/`, `subtitles/`, `output/`). Saat ini aktif: form topik, daftar project, dan panel progress per tahap dengan error berkode. Tahap Research sampai QC menyusul; yang belum tersedia ditandai dan tidak dijalankan diam-diam. |
->>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 | **Settings** | Status sistem, OpenAI, library backsound / SFX / meme / karakter, panduan ekstensi Flow. |
 
 Menu News, Horror AI, Psychology, Motion Graphic, History Stickman dan library ikon sudah dihapus.
@@ -30,8 +29,6 @@ Menu News, Horror AI, Psychology, Motion Graphic, History Stickman dan library i
 
 Jumlah adegan: 1 menit = 10, 3 menit = 30, 5 menit = 50 (1 adegan = 1 gambar).
 
-<<<<<<< HEAD
-=======
 ## Riset dulu, baru naskah (penting untuk topik sejarah/lokal)
 API OpenAI **tidak punya akses internet** seperti ChatGPT yang bisa browsing. Untuk topik kecil (mis. sejarah sebuah kecamatan), tanpa bahan AI akan mengarang. Makanya ada 3 pilihan **Sumber fakta**:
 1. **Riset web otomatis** (default): engine meminta OpenAI mencari di web (web search), menyusun dossier fakta + daftar sumber URL, lalu naskah ditulis **hanya dari dossier itu**. Memakai token + biaya web search. Tombol manualnya: **Riset web otomatis** di bawah kotak bahan.
