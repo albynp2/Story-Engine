@@ -5,7 +5,10 @@
     manual: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg>',
     explainer: '<svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V17h6v-.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/></svg>',
     drama: '<svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+<<<<<<< HEAD
     fact: '<svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/></svg>',
+=======
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     stickman: '<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M12 8v8M6 11l6 2 6-2M12 16l-4 6M12 16l4 6"/></svg>',
     settings: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
   };
@@ -15,7 +18,10 @@
     ['explainer', 'Explainer', 'explainer.html'],
     ['drama', 'Drama AI', 'drama-ai.html'],
     ['stickman', 'Stickman', 'stickman.html'],
+<<<<<<< HEAD
     ['fact', 'Fact Explainer', 'fact-explainer.html'],
+=======
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     ['settings', 'Settings', 'settings.html']
   ];
   var cur = 'dashboard', label = 'Dashboard';
@@ -62,6 +68,27 @@
     if (tb) tb.innerHTML = topbar();
     poll(); setInterval(poll, 15000);
   }
+<<<<<<< HEAD
+=======
+
+  /* Tangkap error JS supaya kegagalan tidak diam-diam (muncul banner merah). */
+  function errBanner(msg) {
+    if (!document.body) return;
+    var b = document.getElementById('seErr');
+    if (!b) {
+      b = document.createElement('div'); b.id = 'seErr';
+      b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:70px;z-index:99;max-width:min(720px,92vw);background:#3a1219;border:1px solid #f04452;color:#ffd5da;padding:10px 14px;border-radius:12px;font-size:13px;box-shadow:0 8px 30px #0009';
+      b.innerHTML = '<b>Terjadi error.</b> Kirim teks ini ke developer: <div id="seErrMsg" style="margin-top:6px;font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap"></div><button class="g" style="margin-top:8px" onclick="this.parentNode.remove()">Tutup</button>';
+      document.body.appendChild(b);
+    }
+    document.getElementById('seErrMsg').textContent = msg;
+  }
+  window.addEventListener('error', function (e) {
+    if (e.message && /ResizeObserver/.test(e.message)) return;
+    errBanner((e.message || 'error') + (e.filename ? '\n' + e.filename.split('/').pop() + ':' + e.lineno : ''));
+  });
+  window.addEventListener('unhandledrejection', function (e) { errBanner('Promise ditolak: ' + (e.reason && e.reason.message || e.reason)); });
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   window.seToast = function (msg) {
     var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
     setTimeout(function () { t.remove(); }, 2600);

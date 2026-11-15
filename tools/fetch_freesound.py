@@ -1,5 +1,5 @@
 """Download efek suara CC0 dari Freesound ke library lokal (preview MP3 kualitas tinggi).
-BELUM DIUJI oleh pembuat (tanpa akses internet saat dibuat) - cek hasilnya sebelum dipakai.
+Versi tombol di Settings lebih nyaman dipakai. Skrip CLI ini belum diuji ke Freesound asli.
 
   set FREESOUND_API_KEY=xxxx            (key gratis: https://freesound.org/apiv2/apply/)
   python tools/fetch_freesound.py "rain" --max 3 --tags hujan,rain

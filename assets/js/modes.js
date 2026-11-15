@@ -32,7 +32,11 @@ var CONTENT = {
     theme: 'Flat Vector',
     prompt: 'Explain one topic simply and accurately.\n' +
       'STRUCTURE: hook question -> why it matters -> how it works step by step -> relatable example -> surprising fact -> takeaway.\n' +
+<<<<<<< HEAD
       'RULE: each scene must visually show exactly what its narration explains. Keep one consistent visual system across scenes.'
+=======
+      'RULE: each scene must visually show exactly what its narration explains. Keep one consistent visual system across scenes.\n' +\n      'For every scene also plan a subtle local motion direction for the Story Engine (camera, pan, zoom, parallax, airflow, particle or object movement).\n' +\n      'For every scene provide timed SFX events that match the visual action and narration. Prefer reusable library IDs when appropriate: whoosh, pop, ding, click, success, rain, thunder, riser. Never invent audio filenames.'
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   },
   drama: {
     title: 'Drama AI', chip: 'DRAMA AI',
@@ -119,7 +123,13 @@ function mk1() {
   var out = [];
   out.push('Create a ' + profile.kind + ' titled "' + t + '".');
   out.push('Language of all narration (voice-over text): ' + lang + '. Image descriptions ("visual", character "look") must be in English.');
+<<<<<<< HEAD
   out.push('Exactly ' + n + ' scenes. Total narration about ' + words + ' words (about ' + Math.round(words / n) + ' words per scene).');
+=======
+  var hasSrc = !!(profile.fact && src);
+  if (hasSrc) out.push('At most ' + n + ' scenes (use FEWER scenes rather than padding). Total narration at most about ' + words + ' words; shorter is fine if the material is thin.');
+  else out.push('Exactly ' + n + ' scenes. Total narration about ' + words + ' words (about ' + Math.round(words / n) + ' words per scene).');
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   out.push('Tone: ' + th[4] + '.');
   out.push('Visual style: ' + st + '.');
   out.push('');
@@ -128,19 +138,35 @@ function mk1() {
     out.push('');
     out.push(FACT_RULES);
     out.push('');
+<<<<<<< HEAD
     out.push('SOURCE MATERIAL:\n' + (src || '[none supplied - use only well-established, verifiable facts and say so in "notes"]'));
+=======
+    if (hasSrc) out.push('STRICT SOURCE MODE: every sentence of narration must be traceable to the SOURCE MATERIAL below. Do NOT add founding dates, causes, numbers, names, culture, tourism, or praise that the material does not state. No generic filler (for example "famous for its culture", "a tourist hub", "many traders came") unless the material says so. If the material marks something as uncertain, say it is uncertain.\nSOURCE MATERIAL:\n' + src);
+    else out.push('NO SOURCE MATERIAL IS SUPPLIED and you have NO web access. If the topic involves specific local, small-scale, recent or obscure facts that you do not know with certainty, reply ONLY with {"error":"butuh bahan sumber atau riset web"} instead of guessing. Continue only for widely documented, well-established facts.');
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   } else {
     out.push('');
     out.push('This is fiction: invented characters and events are allowed. Do not present the story as real news or real history.');
   }
   var sc = '"no":1,"narration":"voice-over text in ' + lang + '","visual":"image description in English: location, action, expression, camera angle","characters":["names in this scene"],"mood":""';
   if (profile.fact) sc += ',"fact_basis":""';
+<<<<<<< HEAD
   if (profile.stick) sc += ',"camera":"","reaction":"","sfx":""';
+=======
+  sc += ',"camera":"zoom_in|zoom_out|pan_left|pan_right|parallax|static"';
+  sc += ',"motion":"short description of how the still image should be animated locally"';
+  sc += ',"sfx_events":[{"start":0,"duration":0.8,"id":"whoosh","volume":0.25,"reason":"why this sound matches the action"}]';
+  if (profile.stick) sc += ',"reaction":"","sfx":""';
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   var head = '"title":"","style":"","characters":[{"name":"","look":"fixed physical description and clothing, in English"}]';
   if (profile.fact) head += ',"sources":[{"name":"","year":""}],"notes":""';
   out.push('');
   out.push('Reply ONLY with valid JSON (no markdown, no other text) in this format:\n{' + head + ',"scenes":[{' + sc + '}]}');
+<<<<<<< HEAD
   out.push('Make the opening scene an immediate hook, keep continuity across scenes, and end with a memorable payoff.');
+=======
+  out.push(profile.fact ? 'Open with a hook built from a REAL fact (not a vague claim), keep continuity, and end with a payoff that is also real.' : 'Make the opening scene an immediate hook, keep continuity across scenes, and end with a memorable payoff.');
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   $('p1').value = out.join('\n');
   $('p1').style.display = $('c1').style.display = 'block';
 }

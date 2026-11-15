@@ -11,7 +11,10 @@ except Exception as _e:  # noqa
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 PORT = int(os.environ.get("PORT", "8000"))
+<<<<<<< HEAD
 HOST = os.environ.get("SE_HOST", "127.0.0.1")  # Docker: set SE_HOST=0.0.0.0
+=======
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 LIB = os.path.join(ROOT, "library")
 IDX = os.path.join(LIB, "index.json")
 KIND_DIR = {"image": "images", "sfx": "sfx", "bgm": "bgm", "meme": "memes", "char": "characters"}
@@ -32,28 +35,99 @@ async def synth(text, voice, rate):
     return bytes(audio), sub.get_srt()
 
 
-def call_openai(d):
-    key = d.get("key") or os.environ.get("OPENAI_API_KEY", "")
-    if not key:
-        raise RuntimeError("API key OpenAI belum diisi")
-    body = json.dumps({
-        "model": d.get("model") or "gpt-4o-mini",
-        "messages": [{"role": "user", "content": d["prompt"]}],
-        "response_format": {"type": "json_object"},
-    }).encode()
+OPENAI_BASE = os.environ.get("OPENAI_BASE", "https://api.openai.com/v1")
+
+
+class OAError(RuntimeError):
+    def __init__(self, msg, code=0):
+        super().__init__(msg)
+        self.code = code
+
+
+def _oa_post(path, payload, key, timeout=180):
     req = urllib.request.Request(
-        "https://api.openai.com/v1/chat/completions", data=body,
+        OPENAI_BASE + path, data=json.dumps(payload).encode(),
         headers={"Content-Type": "application/json", "Authorization": "Bearer " + key})
     try:
-        with urllib.request.urlopen(req, timeout=180) as r:
-            j = json.loads(r.read())
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read())
     except urllib.error.HTTPError as e:
         try:
             msg = json.loads(e.read())["error"]["message"]
         except Exception:
             msg = str(e)
-        raise RuntimeError(msg)
+        raise OAError(msg, e.code)
+    except socket.timeout:
+        raise OAError("OpenAI timeout: respons tidak diterima dalam batas waktu. Coba lagi atau gunakan bahan faktual manual.")
+    except TimeoutError:
+        raise OAError("OpenAI timeout: respons tidak diterima dalam batas waktu. Coba lagi atau gunakan bahan faktual manual.")
+    except urllib.error.URLError as e:
+        raise OAError("Tidak bisa menghubungi OpenAI: %s" % e.reason)
+
+
+def _oa_key(d):
+    key = d.get("key") or os.environ.get("OPENAI_API_KEY", "")
+    if not key:
+        raise RuntimeError("API key OpenAI belum diisi")
+    return key
+
+
+def call_openai(d):
+    j = _oa_post("/chat/completions", {
+        "model": d.get("model") or "gpt-4o-mini",
+        "messages": [{"role": "user", "content": d["prompt"]}],
+        "response_format": {"type": "json_object"},
+    }, _oa_key(d))
     return j["choices"][0]["message"]["content"]
+
+
+RESEARCH_PROMPT = (
+    "Cari di web dan susun dossier fakta tentang topik berikut: \"%s\".\n"
+    "ATURAN KETAT:\n"
+    "- Tulis HANYA fakta yang kamu temukan di sumber web. Jangan menebak, jangan mengarang, jangan melengkapi dari ingatan.\n"
+    "- Setiap fakta sebutkan nama sumbernya. Angka, tahun, nama orang dan tempat harus persis seperti di sumber.\n"
+    "- Kalau sumber saling bertentangan, tulis kedua versinya. Kalau tidak ditemukan, tulis \"Tidak ditemukan\".\n"
+    "- Kalau sumber sendiri bilang belum pasti, tulis bahwa itu belum pasti.\n"
+    "FORMAT (Bahasa Indonesia, sekitar 400-700 kata):\n"
+    "1) Ringkasan singkat.\n2) Fakta terverifikasi (poin, urut kronologis jika sejarah, tiap poin ada sumbernya).\n"
+    "3) Hal yang belum jelas atau tidak ditemukan.\n4) Daftar sumber.")
+
+
+def research(d):
+    topic = str(d.get("topic", "")).strip()
+    if len(topic.split()) < 2:
+        raise RuntimeError("Tulis topik yang jelas dulu (minimal 2 kata)")
+    key = _oa_key(d)
+    model = d.get("model") or "gpt-4o-mini"
+    prompt = RESEARCH_PROMPT % topic.replace('"', "'")
+    j = None
+    err = None
+    for tool in ("web_search", "web_search_preview"):
+        try:
+            j = _oa_post("/responses", {"model": model, "tools": [{"type": tool}], "input": prompt}, key, timeout=120)
+            break
+        except OAError as e:
+            err = e
+            if e.code != 400:
+                raise
+    if j is None:
+        raise RuntimeError("Riset web gagal: %s (model %s mungkin tidak mendukung web search, coba gpt-4o-mini atau gpt-4.1-mini)" % (err, model))
+    text, srcs = "", []
+    for it in j.get("output", []):
+        if it.get("type") != "message":
+            continue
+        for c in it.get("content", []):
+            if c.get("type") == "output_text":
+                text += c.get("text", "")
+                for a in c.get("annotations", []):
+                    if a.get("type") == "url_citation" and a.get("url") and a["url"] not in [x["url"] for x in srcs]:
+                        srcs.append({"title": a.get("title", ""), "url": a["url"]})
+    if not text.strip():
+        raise RuntimeError("Riset web tidak mengembalikan teks")
+    full = text.strip()
+    if srcs:
+        full += "\n\nSUMBER (URL):\n" + "\n".join("- %s: %s" % (x["title"] or "sumber", x["url"]) for x in srcs[:15])
+    return {"text": full, "sources": srcs[:15]}
 
 
 # ---------- TTS offline (pyttsx3 lewat subprocess) ----------
@@ -226,6 +300,89 @@ def flow_status(jid):
                 "ext_seen": time.time() - FLOW["seen"] < 15}
 
 
+<<<<<<< HEAD
+=======
+# ---------- Freesound (SFX gratis, hanya lisensi CC0) ----------
+FS_BASE = os.environ.get("FREESOUND_BASE", "https://freesound.org/apiv2")
+FS_FIELDS = "id,name,tags,username,license,previews,duration"
+
+
+def _fs_key(d):
+    key = (d.get("key") or os.environ.get("FREESOUND_API_KEY", "")).strip()
+    if not key:
+        raise RuntimeError("API key Freesound belum diisi (key gratis: https://freesound.org/apiv2/apply/)")
+    return key
+
+
+def _fs_get(path, params, key):
+    req = urllib.request.Request(FS_BASE + path + "?" + urllib.parse.urlencode(params), headers={"Authorization": "Token " + key})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        if e.code in (401, 403):
+            raise RuntimeError("API key Freesound ditolak")
+        if e.code == 429:
+            raise RuntimeError("Terlalu banyak request ke Freesound, coba lagi sebentar lagi")
+        raise RuntimeError("Freesound error HTTP %d" % e.code)
+    except urllib.error.URLError as e:
+        raise RuntimeError("Tidak bisa menghubungi Freesound: %s" % e.reason)
+
+
+def _is_cc0(lic):
+    lic = str(lic or "")
+    return "publicdomain/zero" in lic or "Creative Commons 0" in lic
+
+
+def _fs_host_ok(url):
+    u = urllib.parse.urlparse(url)
+    h = (u.hostname or "").lower()
+    return u.scheme in ("http", "https") and (h == "freesound.org" or h.endswith(".freesound.org") or u.netloc == urllib.parse.urlparse(FS_BASE).netloc)
+
+
+def freesound_search(d):
+    q = str(d.get("query", "")).strip()
+    if not q:
+        raise RuntimeError("Isi kata kunci pencarian")
+    try:
+        maxdur = max(0.5, min(30.0, float(d.get("maxdur", 10))))
+    except (TypeError, ValueError):
+        maxdur = 10.0
+    j = _fs_get("/search/text/", {"query": q, "page_size": 15, "fields": FS_FIELDS,
+                                   "filter": 'license:"Creative Commons 0" duration:[0 TO %s]' % maxdur}, _fs_key(d))
+    out = []
+    for r in j.get("results", []):
+        pv = r.get("previews") or {}
+        if not _is_cc0(r.get("license")) or not pv.get("preview-hq-mp3"):
+            continue
+        out.append({"id": r["id"], "name": r.get("name", ""), "tags": (r.get("tags") or [])[:6], "user": r.get("username", ""),
+                    "duration": round(float(r.get("duration", 0)), 2), "preview": pv.get("preview-lq-mp3") or pv["preview-hq-mp3"]})
+    return {"results": out}
+
+
+def freesound_add(d):
+    sid = int(d["id"])
+    r = _fs_get("/sounds/%d/" % sid, {"fields": FS_FIELDS}, _fs_key(d))
+    if not _is_cc0(r.get("license")):
+        raise RuntimeError("Suara ini bukan lisensi CC0, tidak ditambahkan")
+    url = (r.get("previews") or {}).get("preview-hq-mp3")
+    if not url or not _fs_host_ok(url):
+        raise RuntimeError("URL preview tidak valid")
+    with urllib.request.urlopen(url, timeout=60) as x:
+        mp3 = x.read(5_000_001)
+    if len(mp3) > 5_000_000:
+        raise RuntimeError("File terlalu besar (maks 5 MB)")
+    slug = re.sub(r"[^a-z0-9]+", "_", str(r.get("name", "sfx")).lower()).strip("_")[:22] or "sfx"
+    ut = d.get("tags") or []
+    if isinstance(ut, str):
+        ut = [t for t in re.split(r"[,\s]+", ut) if t]
+    tags = ",".join(dict.fromkeys([str(t).lower() for t in ut] + [str(t).lower() for t in (r.get("tags") or [])[:5]]))
+    lib_add({"id": "fs_%s_%d" % (slug, sid), "kind": "sfx", "ext": "mp3", "data": base64.b64encode(mp3).decode(),
+             "tags": tags, "license": "CC0-1.0", "author": r.get("username", ""), "source": "https://freesound.org/s/%d/" % sid})
+    return {"ok": True, "id": "fs_%s_%d" % (slug, sid)}
+
+
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 def origin_ok(o):
     return bool(o) and (o.startswith("chrome-extension://") or o.startswith("moz-extension://") or re.match(r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$", o))
 
@@ -282,8 +439,11 @@ class H(SimpleHTTPRequestHandler):
         self.send_error(404)
 
     def do_GET(self):
+<<<<<<< HEAD
         if self.path.startswith(("/api/project", "/api/stages")):
             return self._fact("GET")
+=======
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
         if self.path.startswith("/api/health"):
             try:
                 import edge_tts  # noqa
@@ -291,7 +451,11 @@ class H(SimpleHTTPRequestHandler):
             except Exception:
                 edge = False
             return _json(self, {"ffmpeg": bool(shutil.which("ffmpeg")), "edge": edge,
+<<<<<<< HEAD
                                 "openai_env": bool(os.environ.get("OPENAI_API_KEY")),
+=======
+                                "openai_env": bool(os.environ.get("OPENAI_API_KEY")), "freesound_env": bool(os.environ.get("FREESOUND_API_KEY")),
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
                                 "flow_ext": time.time() - FLOW["seen"] < 15})
         if self.path.startswith("/api/flow/next"):
             return _json(self, flow_next())
@@ -338,16 +502,26 @@ class H(SimpleHTTPRequestHandler):
         o = self.headers.get("Origin", "")
         if origin_ok(o):
             self.send_header("Access-Control-Allow-Origin", o)
+<<<<<<< HEAD
             self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
+=======
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
             self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.send_header("Content-Length", "0")
         self.end_headers()
 
     def do_POST(self):
+<<<<<<< HEAD
         if self.path.startswith("/api/project/"):
             return self._fact("POST")
         routes = ("/tts", "/openai", "/tts-offline", "/api/to-mp4", "/api/library/add", "/api/library/delete",
                   "/api/flow/jobs", "/api/flow/progress", "/api/flow/result", "/api/flow/cancel")
+=======
+        routes = ("/tts", "/openai", "/tts-offline", "/api/to-mp4", "/api/library/add", "/api/library/delete",
+                  "/api/flow/jobs", "/api/flow/progress", "/api/flow/result", "/api/flow/cancel",
+                  "/api/freesound/search", "/api/freesound/add", "/api/research")
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
         if self.path not in routes:
             self.send_error(404)
             return
@@ -373,6 +547,15 @@ class H(SimpleHTTPRequestHandler):
                 out = lib_add(d)
             elif self.path == "/api/library/delete":
                 out = lib_delete(d["id"])
+<<<<<<< HEAD
+=======
+            elif self.path == "/api/research":
+                out = research(d)
+            elif self.path == "/api/freesound/search":
+                out = freesound_search(d)
+            elif self.path == "/api/freesound/add":
+                out = freesound_add(d)
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
             elif self.path == "/api/flow/jobs":
                 out = flow_new(d)
             elif self.path == "/api/flow/progress":

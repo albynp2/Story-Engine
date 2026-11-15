@@ -10,7 +10,11 @@
   /* --- banner status --- */
   var bar = document.createElement('div');
   bar.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147483647;background:#111b26;color:#e7edf5;font:12px system-ui;padding:8px 12px;border:1px solid #f04452;border-radius:10px;max-width:340px;box-shadow:0 4px 18px #0008';
+<<<<<<< HEAD
   bar.textContent = 'Story Engine: ekstensi aktif di ' + location.host + ', menghubungi engine...';
+=======
+  bar.textContent = 'Story Engine: terhubung';
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   document.documentElement.appendChild(bar);
   function say(t) { bar.textContent = 'Story Engine: ' + t; }
 
@@ -53,6 +57,18 @@
     var c = findAll(S.newProjectBtn).concat(findByText(S.newProjectText));
     if (c.length) { c[0].click(); say('membuat project baru...'); await sleep(2500); }
   }
+<<<<<<< HEAD
+=======
+  async function ensureImageMode() {
+    var active = findAll(S.imageModeBtn).filter(function (e) { return e.getAttribute('aria-pressed') === 'true' || e.getAttribute('aria-selected') === 'true'; });
+    if (active.length) return true;
+    var c = findAll(S.imageModeBtn).filter(function (e) { return /image|gambar/i.test(btnText(e)); });
+    if (!c.length) c = findByText(S.imageModeText);
+    if (c.length) { c[0].click(); say('mode IMAGE dipilih (storyboard)...'); await sleep(1200); return true; }
+    say('mode IMAGE tidak terdeteksi; tidak menekan tombol video');
+    return false;
+  }
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   async function waitPromptBox(sec) {
     for (var i = 0; i < sec * 2; i++) { var b = promptBox(); if (b) return b; await sleep(500); }
     throw new Error('Kotak prompt Flow tidak ditemukan. Cek selectors.js.');
@@ -100,6 +116,10 @@
   async function runJob(job) {
     stopFlag = false; say('mengerjakan "' + job.title + '"');
     if (!job.done.length) await newProject();
+<<<<<<< HEAD
+=======
+    await ensureImageMode();
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     var todo = job.prompts.filter(function (p) { return job.done.indexOf(p.no) < 0; });
     for (var i = 0; i < todo.length; i++) {
       var st = await api('/api/flow/job?id=' + job.id);
@@ -114,8 +134,12 @@
   async function poll() {
     if (busy) return;
     var r = await api('/api/flow/next');
+<<<<<<< HEAD
     if (!r || r.error) { say('tidak bisa menghubungi engine di ' + S.engine + ' (' + ((r && r.error) || 'tanpa respons') + '). Pastikan server jalan di alamat itu.'); return; }
     if (!r.job) { say('terhubung ke engine, menunggu job'); return; }
+=======
+    if (!r || r.error || !r.job) return;
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     busy = true;
     try { await runJob(r.job); }
     catch (e) { say('error: ' + e.message); await api('/api/flow/progress', 'POST', { id: r.job.id, status: 'error', msg: e.message }); }

@@ -2,7 +2,11 @@
 var $=function(i){return document.getElementById(i)},D=null;
 var DB_NAME='story_engine_db',DB_VER=2;
 function getSettings(){try{return JSON.parse(localStorage.getItem('se_settings')||'{}')}catch(e){return {}}}
+<<<<<<< HEAD
 function saveSettings(){var s={openaiKey:$('setOpenAIKey').value.trim(),openaiModel:$('setOpenAIModel').value.trim()||'gpt-4o-mini'};localStorage.setItem('se_settings',JSON.stringify(s));$('setMsg').textContent='Settings tersimpan di browser lokal.';if(window.seToast)seToast('Data berhasil tersimpan');if(window.sePoll)sePoll()}
+=======
+function saveSettings(){var s=getSettings();s.openaiKey=$('setOpenAIKey').value.trim();s.openaiModel=$('setOpenAIModel').value.trim()||'gpt-4o-mini';localStorage.setItem('se_settings',JSON.stringify(s));$('setMsg').textContent='Settings tersimpan di browser lokal.';if(window.seToast)seToast('Data berhasil tersimpan');if(window.sePoll)sePoll()}
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 function clearOpenAIKey(){$('setOpenAIKey').value='';var s=getSettings();s.openaiKey='';localStorage.setItem('se_settings',JSON.stringify(s));$('setMsg').textContent='API key dihapus.'}
 function loadSettings(){var s=getSettings();if($('setOpenAIKey'))$('setOpenAIKey').value=s.openaiKey||'';if($('setOpenAIModel'))$('setOpenAIModel').value=s.openaiModel||'gpt-4o-mini'}
 function openDB(){return new Promise(function(res,rej){var r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=function(e){var db=r.result,tx=r.transaction;if(!db.objectStoreNames.contains('videos')){var st=db.createObjectStore('videos',{keyPath:'id'});st.createIndex('createdAt','createdAt')}if(!db.objectStoreNames.contains('log')){var lg=db.createObjectStore('log',{keyPath:'id'});if(e.oldVersion>=1){tx.objectStore('videos').openCursor().onsuccess=function(ev){var c=ev.target.result;if(c){var v=c.value;lg.put({id:v.id,mode:v.mode||'legacy',modeLabel:v.modeLabel||'Lama',createdAt:v.createdAt,title:v.title});c.continue()}}}}};r.onsuccess=function(){res(r.result)};r.onerror=function(){rej(r.error)}})}
@@ -24,7 +28,14 @@ if(!d.scenes||!d.scenes.length){$('er').textContent='Tidak ada "scenes".';return
 var ch={};(d.characters||[]).forEach(function(c){ch[c.name]=c.look});var h='';
 d.scenes.forEach(function(s,i){var who=(s.characters||[]).map(function(n){return n+' ('+(ch[n]||'')+')'}).join('; ');
 var p='File name: gambar'+(s.no||i+1)+'. '+($('style').value||d.style)+'. '+s.visual+(who?' Characters: '+who+'.':'')+(s.mood?' Mood: '+s.mood+'.':'')+' '+AR()+', '+NT()+'no watermark.';
+<<<<<<< HEAD
 h+='<div class="sc"><b>Adegan '+(s.no||i+1)+'</b><textarea id="f'+i+'" readonly style="min-height:80px;margin-top:6px">'+p.replace(/</g,'&lt;')+'</textarea><div class="row" style="margin-top:6px"><button class="g" onclick="cp(\'f'+i+'\')">Copy prompt</button><input type="file" accept="image/*" onchange="im(this,'+i+')"></div><div class="s" style="margin:10px 0 4px"><b>Narasi:</b> '+String(s.narration).replace(/</g,'&lt;')+'</div><div class="row"><button class="g" onclick="cn('+i+')">Copy narasi</button><input type="file" accept="audio/*" onchange="sa(this.files[0],'+i+')"></div><small id="as'+i+'" style="color:var(--mu)"></small><img id="i'+i+'" style="display:none"></div>'});
+=======
+var mot=String(s.motion||'static').replace(/</g,'&lt;'),cam=String(s.camera||'static').replace(/</g,'&lt;');
+var se=Array.isArray(s.sfx_events)?s.sfx_events:[];
+var sfx=se.map(function(e){return String(e.id||'').replace(/</g,'&lt;')+' @ '+String(e.start||0)+'s';}).join(', ');
+h+='<div class="sc"><b>Adegan '+(s.no||i+1)+'</b><textarea id="f'+i+'" readonly style="min-height:80px;margin-top:6px">'+p.replace(/</g,'&lt;')+'</textarea><div class="row" style="margin-top:6px"><button class="g" onclick="cp(\'f'+i+'\')">Copy prompt</button><input type="file" accept="image/*" onchange="im(this,'+i+')"></div><div class="s" style="margin:8px 0 4px"><b>Motion:</b> '+mot+' <b>Camera:</b> '+cam+(sfx?' <b>SFX:</b> '+sfx:'')+'</div><div class="s" style="margin:10px 0 4px"><b>Narasi:</b> '+String(s.narration).replace(/</g,'&lt;')+'</div><div class="row"><button class="g" onclick="cn('+i+')">Copy narasi</button><input type="file" accept="audio/*" onchange="sa(this.files[0],'+i+')"></div><small id="as'+i+'" style="color:var(--mu)"></small><img id="i'+i+'" style="display:none"></div>'});
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 $('scenes').innerHTML=h;$('all').value=d.scenes.map(function(s,i){return '[gambar'+(s.no||i+1)+']\n'+$('f'+i).value}).join('\n\n');$('s3').style.display=$('s4').style.display='block';
 $('nar').value=d.scenes.map(function(s){return s.narration}).join('\n\n');updateSocial();srt()}
 var dz=$('dz');if(dz){dz.ondragover=function(e){e.preventDefault()};dz.ondrop=function(e){e.preventDefault();fl(e.dataTransfer.files)}}

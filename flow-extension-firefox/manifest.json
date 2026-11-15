@@ -1,13 +1,20 @@
 {
   "manifest_version": 3,
   "name": "Story Engine - Flow Bridge",
+<<<<<<< HEAD
   "version": "1.0.1",
+=======
+  "version": "1.0.0",
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   "description": "Menghubungkan Story Engine lokal dengan tab Google Flow: mengetik prompt, menunggu gambar, mengirim hasil ke engine.",
   "host_permissions": [
     "http://localhost:8000/*",
     "http://127.0.0.1:8000/*",
     "https://labs.google/*",
+<<<<<<< HEAD
     "https://flow.google/*",
+=======
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     "https://*.googleusercontent.com/*",
     "https://storage.googleapis.com/*"
   ],
@@ -19,8 +26,12 @@
   "content_scripts": [
     {
       "matches": [
+<<<<<<< HEAD
         "https://labs.google/*",
         "https://flow.google/*"
+=======
+        "https://labs.google/*"
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
       ],
       "js": [
         "selectors.js",

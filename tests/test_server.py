@@ -70,6 +70,120 @@ check("no license refused", "error" in post("/api/library/add", {"id": "abc_y", 
 post("/api/library/delete", {"id": "tes_bgm"}); post("/api/library/delete", {"id": "tes_char"})
 idx = json.loads(get("/library/index.json")[1])
 check("cleanup", not any(a["id"].startswith("tes_") for a in idx["assets"]))
+<<<<<<< HEAD
+=======
+
+# ---------- Freesound (server palsu, tanpa internet) ----------
+from http.server import BaseHTTPRequestHandler
+import urllib.parse as up
+MP3 = b"ID3\x03\x00\x00\x00\x00\x00\x00" + b"\xff\xfb\x90\x00" * 50
+SOUNDS = {
+    101: {"id": 101, "name": "Whoosh Fast", "tags": ["whoosh", "air"], "username": "tester", "license": "http://creativecommons.org/publicdomain/zero/1.0/", "duration": 1.5},
+    102: {"id": 102, "name": "Not CC0", "tags": ["x"], "username": "tester", "license": "http://creativecommons.org/licenses/by/4.0/", "duration": 1.0},
+    103: {"id": 103, "name": "Evil Host", "tags": ["x"], "username": "tester", "license": "http://creativecommons.org/publicdomain/zero/1.0/", "duration": 1.0},
+}
+
+
+class FS(BaseHTTPRequestHandler):
+    def log_message(self, *a): pass
+
+    def _j(self, o, code=200):
+        b = json.dumps(o).encode(); self.send_response(code); self.send_header("Content-Type", "application/json"); self.send_header("Content-Length", str(len(b))); self.end_headers(); self.wfile.write(b)
+
+    def do_GET(self):
+        u = up.urlparse(self.path)
+        if self.headers.get("Authorization") != "Token goodkey" and not u.path.startswith("/p/"):
+            return self._j({"detail": "Invalid token."}, 401)
+        if u.path == "/search/text/":
+            q = up.parse_qs(u.query)
+            assert "Creative Commons 0" in q["filter"][0]
+            res = []
+            for i, snd in SOUNDS.items():
+                snd = dict(snd); snd["previews"] = {"preview-hq-mp3": FSB + "/p/%d.mp3" % i, "preview-lq-mp3": FSB + "/p/%d-lq.mp3" % i}
+                res.append(snd)
+            return self._j({"results": res})
+        if u.path.startswith("/sounds/"):
+            i = int(u.path.strip("/").split("/")[1]); snd = dict(SOUNDS[i])
+            snd["previews"] = {"preview-hq-mp3": ("https://evil.example/x.mp3" if i == 103 else FSB + "/p/%d.mp3" % i)}
+            return self._j(snd)
+        if u.path.startswith("/p/"):
+            self.send_response(200); self.send_header("Content-Type", "audio/mpeg"); self.send_header("Content-Length", str(len(MP3))); self.end_headers(); self.wfile.write(MP3); return
+        self.send_error(404)
+
+
+fs_srv = ThreadingHTTPServer(("127.0.0.1", 0), FS)
+FSB = "http://127.0.0.1:%d" % fs_srv.server_address[1]
+threading.Thread(target=fs_srv.serve_forever, daemon=True).start()
+server.FS_BASE = FSB
+os.environ.pop("FREESOUND_API_KEY", None)
+
+check("freesound: tanpa key ditolak", "belum diisi" in post("/api/freesound/search", {"query": "whoosh"})[0].get("error", ""))
+check("freesound: key salah", "ditolak" in post("/api/freesound/search", {"key": "bad", "query": "whoosh"})[0].get("error", ""))
+check("freesound: kata kunci kosong", "kata kunci" in post("/api/freesound/search", {"key": "goodkey", "query": " "})[0].get("error", ""))
+r = post("/api/freesound/search", {"key": "goodkey", "query": "whoosh", "maxdur": 8})[0]
+ids = [x["id"] for x in r.get("results", [])]
+check("freesound: hanya CC0 yang tampil", 101 in ids and 102 not in ids, ids)
+check("freesound: ada URL preview", r["results"][0]["preview"].endswith("-lq.mp3"))
+a = post("/api/freesound/add", {"key": "goodkey", "id": 101, "tags": "whoosh"})[0]
+check("freesound: tambah CC0", a.get("ok") and a["id"] == "fs_whoosh_fast_101", a)
+idx = json.loads(get("/library/index.json")[1])
+e = [x for x in idx["assets"] if x["id"] == "fs_whoosh_fast_101"]
+check("freesound: masuk library sebagai sfx CC0", e and e[0]["kind"] == "sfx" and e[0]["license"] == "CC0-1.0" and e[0]["source"].endswith("/s/101/") and e[0]["tags"] == ["whoosh", "air"], e)
+check("freesound: file mp3 terunduh", get("/library/" + e[0]["file"])[1][:3] == b"ID3")
+check("freesound: duplikat ditolak", "sudah dipakai" in post("/api/freesound/add", {"key": "goodkey", "id": 101})[0].get("error", ""))
+check("freesound: non-CC0 ditolak", "bukan lisensi CC0" in post("/api/freesound/add", {"key": "goodkey", "id": 102})[0].get("error", ""))
+check("freesound: host preview asing ditolak", "tidak valid" in post("/api/freesound/add", {"key": "goodkey", "id": 103})[0].get("error", ""))
+post("/api/library/delete", {"id": "fs_whoosh_fast_101"})
+check("freesound: cleanup", not any(x["id"].startswith("fs_") for x in json.loads(get("/library/index.json")[1])["assets"]))
+
+# ---------- Riset web OpenAI (server palsu) ----------
+CALLS = []
+
+
+class OA(BaseHTTPRequestHandler):
+    def log_message(self, *a): pass
+
+    def _j(self, o, code=200):
+        b = json.dumps(o).encode(); self.send_response(code); self.send_header("Content-Type", "application/json"); self.send_header("Content-Length", str(len(b))); self.end_headers(); self.wfile.write(b)
+
+    def do_POST(self):
+        body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+        if self.headers.get("Authorization") != "Bearer sk-good":
+            return self._j({"error": {"message": "Incorrect API key provided"}}, 401)
+        CALLS.append((self.path, body))
+        if self.path == "/responses":
+            tool = body["tools"][0]["type"]
+            if tool == "web_search" and OA.reject_new:
+                return self._j({"error": {"message": "Invalid value: 'web_search'"}}, 400)
+            if "kosong" in body["input"]:
+                return self._j({"output": [{"type": "web_search_call"}, {"type": "message", "content": []}]})
+            return self._j({"output": [{"type": "web_search_call"}, {"type": "message", "content": [{"type": "output_text", "text": "Kadupandak berada di Cianjur selatan. Kontrak perkebunan 75 tahun sekitar 1898.", "annotations": [
+                {"type": "url_citation", "url": "https://example.org/a", "title": "Garuda"}, {"type": "url_citation", "url": "https://example.org/a", "title": "Garuda"}, {"type": "url_citation", "url": "https://example.org/b", "title": "KPU"}]}]}]})
+        if self.path == "/chat/completions":
+            return self._j({"choices": [{"message": {"content": "{\"ok\":1}"}}]})
+        self.send_error(404)
+
+
+OA.reject_new = False
+oa_srv = ThreadingHTTPServer(("127.0.0.1", 0), OA)
+threading.Thread(target=oa_srv.serve_forever, daemon=True).start()
+server.OPENAI_BASE = "http://127.0.0.1:%d" % oa_srv.server_address[1]
+os.environ.pop("OPENAI_API_KEY", None)
+
+check("riset: tanpa key", "belum diisi" in post("/api/research", {"topic": "sejarah kota kadupandak"})[0].get("error", ""))
+check("riset: topik terlalu pendek", "topik yang jelas" in post("/api/research", {"key": "sk-good", "topic": "AC"})[0].get("error", ""))
+check("riset: key salah", "Incorrect API key" in post("/api/research", {"key": "sk-bad", "topic": "sejarah kota kadupandak"})[0].get("error", ""))
+r = post("/api/research", {"key": "sk-good", "topic": "sejarah kota kadupandak", "model": "gpt-4o-mini"})[0]
+check("riset: teks + sumber unik", "1898" in r.get("text", "") and len(r.get("sources", [])) == 2 and "https://example.org/b" in r["text"], r.get("sources"))
+path, body = CALLS[-1]
+check("riset: pakai Responses API + web_search", path == "/responses" and body["tools"] == [{"type": "web_search"}] and "sejarah kota kadupandak" in body["input"] and "Jangan menebak" in body["input"])
+OA.reject_new = True
+r = post("/api/research", {"key": "sk-good", "topic": "sejarah kota kadupandak"})[0]
+check("riset: fallback ke web_search_preview", r.get("text") and CALLS[-1][1]["tools"] == [{"type": "web_search_preview"}], r.get("error"))
+OA.reject_new = False
+check("riset: respons kosong ditolak", "tidak mengembalikan teks" in post("/api/research", {"key": "sk-good", "topic": "topik kosong sekali"})[0].get("error", ""))
+check("openai chat masih jalan", post("/openai", {"key": "sk-good", "prompt": "x"})[0].get("text") == "{\"ok\":1}")
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 import shutil
 shutil.rmtree(os.path.join(server.ROOT, "data"), ignore_errors=True)
 print("SEMUA LULUS" if ok else "ADA YANG GAGAL")

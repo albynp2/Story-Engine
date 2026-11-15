@@ -32,7 +32,16 @@
 <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)"><div class="grid">
 <label class="f">Nama<input id="n_sfx" placeholder="nama singkat"></label>
 <label class="f">File<input type="file" id="f_sfx" accept="audio/*"></label></div>
+<<<<<<< HEAD
 <label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0;font-size:12px"><input type="checkbox" id="l_sfx" style="width:auto;margin-top:3px"> Gua punya hak pakai file ini (buatan sendiri, bebas hak cipta, atau lisensi mengizinkan)</label><input id="lic_sfx" placeholder="Lisensi / sumber (mis. CC0, Pixabay, buatan sendiri)" style="margin-bottom:8px"><button onclick="libUpload('sfx')">Upload SFX</button> <span class="err" id="m_sfx"></span></div></section><section style="margin-top:14px"><h2>Template meme / reaksi (Stickman)</h2><p class="subtle" style="margin:0 0 10px">Muncul sebentar di pojok saat adegan punya reaksi yang cocok. Isi tag dengan salah satu: shock, facepalm, laugh, think, cry, mindblown, sus. Pakai gambar yang lu punya hak pakainya.</p>
+=======
+<label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0;font-size:12px"><input type="checkbox" id="l_sfx" style="width:auto;margin-top:3px"> Gua punya hak pakai file ini (buatan sendiri, bebas hak cipta, atau lisensi mengizinkan)</label><input id="lic_sfx" placeholder="Lisensi / sumber (mis. CC0, Pixabay, buatan sendiri)" style="margin-bottom:8px"><button onclick="libUpload('sfx')">Upload SFX</button> <span class="err" id="m_sfx"></span></div></section><section style="margin-top:14px"><h2>Cari SFX gratis (Freesound)</h2>
+<p class="subtle" style="margin:0 0 10px">Hanya suara berlisensi <b>CC0</b> (boleh dipakai di konten monetisasi tanpa atribusi). Dengarkan dulu, lalu klik Tambah, otomatis masuk ke daftar SFX di atas. API key Freesound gratis: <b>freesound.org/apiv2/apply</b> (atau set environment variable <b>FREESOUND_API_KEY</b> di server).</p>
+<div class="row" style="align-items:end"><label class="f">API key Freesound<input id="fsKey" type="password" placeholder="kosongkan jika pakai environment variable" autocomplete="off"></label><button class="g" onclick="fsSaveKey()">Simpan key</button></div>
+<div class="row" style="align-items:end;margin-top:10px"><label class="f">Kata kunci<input id="fsQ" placeholder="mis. whoosh, pop, record scratch" onkeydown="if(event.key==='Enter')fsSearch()"></label><label class="f" style="max-width:150px">Maks durasi (dtk)<input id="fsDur" type="number" value="8" min="1" max="30"></label><button onclick="fsSearch()">Cari</button></div>
+<div class="subtle" id="fsMsg" style="margin-top:8px"></div><div id="fsRes"></div></section>
+<section style="margin-top:14px"><h2>Template meme / reaksi (Stickman)</h2><p class="subtle" style="margin:0 0 10px">Muncul sebentar di pojok saat adegan punya reaksi yang cocok. Isi tag dengan salah satu: shock, facepalm, laugh, think, cry, mindblown, sus. Pakai gambar yang lu punya hak pakainya.</p>
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 <div id="libMeme"></div>
 <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)"><div class="grid">
 <label class="f">Nama<input id="n_meme" placeholder="nama singkat"></label>

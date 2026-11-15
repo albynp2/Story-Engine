@@ -62,7 +62,14 @@ function bkPrep() {
     }
     var ids = {};
     if ($('sfxSel') && $('sfxSel').value !== 'none') ids[$('sfxSel').value] = 1;
+<<<<<<< HEAD
     if (D && curStick()) D.scenes.forEach(function (s) { var x = String(s.sfx || '').toLowerCase(); if (x && x !== 'none') ids[x] = 1; });
+=======
+    if (D) D.scenes.forEach(function (s) {
+      var x = String(s.sfx || '').toLowerCase(); if (x && x !== 'none') ids[x] = 1;
+      (Array.isArray(s.sfx_events) ? s.sfx_events : []).forEach(function (e) { var id = String(e.id || '').toLowerCase(); if (id && id !== 'none') ids[id] = 1; });
+    });
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     Object.keys(ids).forEach(function (id) {
       var a = libAssets('sfx').filter(function (x) { return x.id === id; })[0];
       if (a) jobs.push(decodeAsset(ctx, a).then(function (b) { SFXB[id] = b; }).catch(function () { }));
@@ -114,7 +121,27 @@ function bkStart(t0) {
   }
   var def = $('sfxSel') ? $('sfxSel').value : 'none';
   B.sc.forEach(function (s, i) {
+<<<<<<< HEAD
     var id = curStick() ? String((D.scenes[i] || {}).sfx || '').toLowerCase() : '';
+=======
+    var scene = D.scenes[i] || {};
+    var events = Array.isArray(scene.sfx_events) ? scene.sfx_events : [];
+    if (events.length) {
+      events.forEach(function (e) {
+        var id = String(e.id || '').toLowerCase();
+        if (!id || id === 'none' || !SFXB[id]) return;
+        var start = Math.max(0, parseFloat(e.start) || 0);
+        var dur = Math.max(0, parseFloat(e.duration) || 0);
+        var vol = Math.max(0.03, Math.min(1, parseFloat(e.volume) || 0.25));
+        var so = ac.createBufferSource(), sg = ac.createGain(); so.buffer = SFXB[id];
+        sg.gain.setValueAtTime(vol, t + s.s + start);
+        if (dur > 0) sg.gain.linearRampToValueAtTime(vol, t + s.s + start + Math.min(dur, 0.15));
+        so.connect(sg); sg.connect(B.dst); so.start(t + s.s + start);
+      });
+      return;
+    }
+    var id = curStick() ? String(scene.sfx || '').toLowerCase() : '';
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     if (!id || id === 'none' || !SFXB[id]) id = (i > 0 && def !== 'none') ? def : '';
     if (!id || !SFXB[id]) return;
     var so = ac.createBufferSource(), sg = ac.createGain(); so.buffer = SFXB[id]; sg.gain.value = 0.6;
@@ -140,7 +167,23 @@ function showFacts() {
       if (src.trim() && (' ' + srcN + ' ').indexOf(' ' + n + ' ') < 0) warn.push('Adegan ' + (s.no || i + 1) + ': angka ' + n + ' tidak ada di bahan sumber.');
     });
   });
+<<<<<<< HEAD
   var srcs = (D.sources || []).map(function (x) { return esc((x.name || '') + (x.year ? ' (' + x.year + ')' : '')); });
+=======
+  if (src.trim()) {
+    var sl = src.toLowerCase(), names = {};
+    D.scenes.forEach(function (s, i) {
+      String(s.narration).split(/(?<=[.!?])\s+/).forEach(function (sen) {
+        sen.split(/\s+/).slice(1).forEach(function (w) {
+          w = w.replace(/[^A-Za-z\u00C0-\u024F-]/g, '');
+          if (w.length >= 4 && /^[A-Z]/.test(w) && sl.indexOf(w.toLowerCase()) < 0) (names[w] = names[w] || []).push(s.no || i + 1);
+        });
+      });
+    });
+    Object.keys(names).slice(0, 10).forEach(function (w) { warn.push('Nama/istilah "' + w + '" tidak ada di bahan sumber (adegan ' + names[w].join(', ') + ').'); });
+  }
+  var srcs = (D.sources || []).map(function (x) { return typeof x === 'string' ? esc(x) : esc((x.name || '') + (x.year ? ' (' + x.year + ')' : '')); });
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   box.innerHTML = '<b>Pemeriksaan fakta</b>' +
     '<div class="s" style="margin:6px 0">AI tidak bisa menjamin 100% benar. Cek sendiri sumber di bawah sebelum video dipublikasikan.</div>' +
     '<div><b>Sumber dari AI:</b> ' + (srcs.length ? srcs.join('; ') : '<span class="err">kosong, verifikasi manual</span>') + '</div>' +
@@ -181,8 +224,14 @@ function audioHTML() {
 function autoHTML(p) {
   var h = '<section id="autoPanel"><h2><span>A</span>Mode otomatis</h2><div class="grid">' +
     '<label class="f">Durasi video<small>Jumlah adegan menyesuaikan</small><select id="dur" onchange="durChange()"><option value="1">1 menit</option><option value="3">3 menit</option><option value="5">5 menit</option></select></label>' +
+<<<<<<< HEAD
     '<label class="f">Sumber gambar<small>Ekstensi Flow otomatis atau upload sendiri</small><select id="isrc"><option value="flow">Google Flow (ekstensi otomatis)</option><option value="manual">Upload sendiri (langkah 3)</option></select></label>' +
     '<label class="f">Suara narasi<small>Edge TTS otomatis atau upload dari Google AI Studio</small><select id="vmode"><option value="edge">Edge TTS otomatis (gratis)</option><option value="studio">Upload dari Google AI Studio</option></select></label>' +
+=======
+    '<label class="f">Sumber gambar<small>Google Flow hanya dipakai untuk <b>gambar storyboard</b>, bukan video berbayar</small><select id="isrc"><option value="flow">Google Flow — IMAGE ONLY</option><option value="manual">Upload sendiri (langkah 3)</option></select></label>' +
+    '<label class="f">Suara narasi<small>Edge TTS otomatis atau upload dari Google AI Studio</small><select id="vmode"><option value="edge">Edge TTS otomatis (gratis)</option><option value="studio">Upload dari Google AI Studio</option></select></label>' +
+    (p.fact ? '<label class="f">Sumber fakta<small>Naskah hanya boleh memakai fakta dari sini</small><select id="fsrc"><option value="web">Riset web otomatis (disarankan)</option><option value="paste">Pakai bahan yang gua tempel</option><option value="ai">Pengetahuan AI saja (berisiko mengarang)</option></select></label>' : '') +
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     (p.characters ? '<label class="f">Karakter (opsional)<small>Dari Settings. Boleh pilih lebih dari satu (Ctrl/Cmd).</small><select id="chSel" multiple size="3" onchange="mk1()"></select></label>' : '') +
     '</div>' + audioHTML() +
     '<label style="display:flex;gap:8px;align-items:center;margin:10px 0;font-size:13px"><input type="checkbox" id="chk" style="width:auto"' + (p.fact ? ' checked' : '') + '> Berhenti setelah naskah jadi supaya gua bisa cek fakta dulu' + (p.fact ? ' (disarankan)' : '') + '</label>' +
@@ -203,6 +252,31 @@ function refreshLibSelects() {
   });
 }
 
+<<<<<<< HEAD
+=======
+
+/* ---------- riset web (OpenAI web search) ---------- */
+function researchCall() {
+  var t = $('title').value.trim(), s = getSettings();
+  var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 135000) : null;
+  return fetch('/api/research', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: s.openaiKey || '', model: s.openaiModel || 'gpt-4o-mini', topic: t }), signal: ctrl ? ctrl.signal : undefined })
+    .then(function (r) { return r.text().then(function (txt) { var j; try { j = JSON.parse(txt); } catch (e) { throw new Error('Respons server tidak valid (HTTP ' + r.status + ').'); } if (!r.ok || j.error) throw new Error(j.error || ('HTTP ' + r.status)); return j; }); })
+    .catch(function (e) { if (e && e.name === 'AbortError') throw new Error('Research timeout di browser setelah 135 detik. Coba lagi atau pilih sumber fakta manual.'); throw e; })
+    .finally(function () { if (timer) clearTimeout(timer); });
+}
+function doResearch() {
+  var m = $('rsMsg'), t = $('title').value.trim();
+  if (!t) { m.textContent = 'Isi judul/topik dulu.'; return; }
+  m.textContent = 'Meriset di web... (biasanya 30-90 detik)'; m.className = 'subtle';
+  researchCall().then(function (j) {
+    $('newsSource').value = j.text;
+    m.textContent = 'Riset selesai: ' + j.sources.length + ' sumber web. Baca dulu, hapus yang salah, baru buat naskah.';
+    if ($('p1').style.display === 'block') mk1();
+  }).catch(function (e) { m.textContent = 'Gagal: ' + e.message; m.className = 'err'; });
+}
+
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 /* ---------- pipeline otomatis ---------- */
 var AUTO = { stage: 'script', busy: false, stop: false, job: null };
 function alog(m, cls) {
@@ -211,22 +285,54 @@ function alog(m, cls) {
   b.appendChild(d); b.scrollTop = b.scrollHeight;
 }
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+<<<<<<< HEAD
 function jpost(u, o) { return fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o) }).then(function (r) { return r.json(); }); }
+=======
+function jpost(u, o) { return fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o) }).then(function (r) { return r.text().then(function (txt) { var j; try { j = JSON.parse(txt); } catch (e) { throw new Error('Server mengembalikan respons bukan JSON (HTTP ' + r.status + ').'); } if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status)); return j; }); }); }
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
 function setBusy(b) { AUTO.busy = b; $('autoGo').disabled = b; $('autoNext').disabled = b || AUTO.stage === 'script' || AUTO.stage === 'done'; }
 function autoStop() { AUTO.stop = true; if (AUTO.job) jpost('/api/flow/cancel', { id: AUTO.job }); alog('Dibatalkan.', 'err'); AUTO.busy = false; $('autoGo').disabled = false; }
 function autoStart() {
   if (AUTO.busy) return;
   var t = $('title').value.trim(), w = titleWarning(t, $('mode').value);
   if (w) { $('er').textContent = w; alog(w, 'err'); return; }
+<<<<<<< HEAD
   $('er').textContent = ''; $('autoLog').innerHTML = ''; AUTO.stage = 'script'; AUTO.stop = false; D = null;
+=======
+  $('er').textContent = ''; $('autoLog').innerHTML = ''; AUTO.stage = CONTENT[$('mode').value].fact ? 'research' : 'script'; AUTO.stop = false; D = null;
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   autoRun();
 }
 function autoResume() { if (AUTO.busy) return; AUTO.stop = false; autoRun(); }
 
 async function autoRun() {
   setBusy(true);
+<<<<<<< HEAD
   try {
     var p = CONTENT[$('mode').value];
+=======
+  var stageTimer = setInterval(function () { if (AUTO.busy) alog('Masih bekerja pada tahap ' + AUTO.stage + '...'); }, 15000);
+  try {
+    var p = CONTENT[$('mode').value];
+    if (AUTO.stage === 'research') {
+      var fm = $('fsrc') ? $('fsrc').value : 'ai';
+      if (fm === 'web') {
+        alog('Riset web (OpenAI web search) dimulai...');
+        alog('Tahap Research aktif. Jika tidak selesai, error akan ditampilkan otomatis.');
+        var rj = await researchCall();
+        $('newsSource').value = rj.text;
+        if (rj.text.length < 300 || rj.sources.length === 0) throw new Error('Riset tidak menemukan cukup fakta/sumber untuk topik ini. Tempel bahan sendiri dan pilih "Pakai bahan yang gua tempel".');
+        alog('Riset selesai: ' + rj.sources.length + ' sumber web.', 'ok');
+      } else if (fm === 'paste') {
+        if (!$('newsSource').value.trim()) throw new Error('Kotak "Bahan / sumber faktual" masih kosong. Tempel bahan dulu.');
+        alog('Memakai bahan yang lu tempel.');
+      } else {
+        $('newsSource').value = '';
+        alog('Mode pengetahuan AI saja: AI diminta menolak kalau tidak yakin, tapi tetap berisiko. Cek fakta manual.', 'err');
+      }
+      AUTO.stage = 'script';
+    }
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     if (AUTO.stage === 'script') {
       mk1(); var s = getSettings();
       if (!(s.openaiKey)) alog('API key OpenAI belum diisi di Settings (kalau server punya OPENAI_API_KEY, tetap lanjut).');
@@ -277,7 +383,12 @@ async function autoRun() {
       alog($('vm').textContent, /Selesai/.test($('vm').textContent) ? 'ok' : 'err');
       AUTO.stage = 'done';
     }
+<<<<<<< HEAD
   } catch (e) { alog('Gagal: ' + e.message, 'err'); }
+=======
+  } catch (e) { alog('Gagal pada tahap ' + AUTO.stage + ': ' + e.message, 'err'); AUTO.stop = true; }
+  clearInterval(stageTimer);
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   setBusy(false);
 }
 function missingScenes() {
@@ -299,7 +410,11 @@ async function runFlow(miss) {
     await sleep(2500);
     var st = await fetch('/api/flow/job?id=' + r.id).then(function (x) { return x.json(); });
     if (st.error) throw new Error(st.error);
+<<<<<<< HEAD
     if (!st.ext_seen && !warned && Date.now() - t0 > 25000) { warned = true; alog('Ekstensi belum terhubung. Buka Flow di https://flow.google (login), refresh tab-nya, dan pastikan ekstensi v1.0.1 sudah di-Reload. Di pojok kiri bawah tab Flow harus muncul kotak "Story Engine: ...".', 'err'); }
+=======
+    if (!st.ext_seen && !warned && Date.now() - t0 > 25000) { warned = true; alog('Ekstensi belum terhubung. Pastikan ekstensi terpasang dan tab Flow terbuka.', 'err'); }
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     for (var k = 0; k < st.done.length; k++) {
       var no = st.done[k];
       if (got[no]) continue;

@@ -10,7 +10,11 @@
   /* --- banner status --- */
   var bar = document.createElement('div');
   bar.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147483647;background:#111b26;color:#e7edf5;font:12px system-ui;padding:8px 12px;border:1px solid #f04452;border-radius:10px;max-width:340px;box-shadow:0 4px 18px #0008';
+<<<<<<< HEAD
   bar.textContent = 'Story Engine: ekstensi aktif di ' + location.host + ', menghubungi engine...';
+=======
+  bar.textContent = 'Story Engine: terhubung';
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   document.documentElement.appendChild(bar);
   function say(t) { bar.textContent = 'Story Engine: ' + t; }
 
@@ -114,8 +118,12 @@
   async function poll() {
     if (busy) return;
     var r = await api('/api/flow/next');
+<<<<<<< HEAD
     if (!r || r.error) { say('tidak bisa menghubungi engine di ' + S.engine + ' (' + ((r && r.error) || 'tanpa respons') + '). Pastikan server jalan di alamat itu.'); return; }
     if (!r.job) { say('terhubung ke engine, menunggu job'); return; }
+=======
+    if (!r || r.error || !r.job) return;
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     busy = true;
     try { await runJob(r.job); }
     catch (e) { say('error: ' + e.message); await api('/api/flow/progress', 'POST', { id: r.job.id, status: 'error', msg: e.message }); }

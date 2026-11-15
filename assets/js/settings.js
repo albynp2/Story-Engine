@@ -58,13 +58,51 @@ function renderStatus(h) {
   el.innerHTML =
     r(!!h, 'Server lokal', h ? 'Berjalan.' : 'Tidak terjangkau. Pastikan server.py masih jalan.') +
     r(oa, 'OpenAI', oa ? (s.openaiKey ? 'API key tersimpan di browser ini.' : 'Memakai OPENAI_API_KEY dari server.') : 'API key belum diisi (isi di bawah).') +
+<<<<<<< HEAD
     r(h && h.ffmpeg, 'FFmpeg', h && h.ffmpeg ? 'Terpasang (dipakai untuk konversi MP4).' : 'Tidak ditemukan. Video tetap jadi (.webm), hanya konversi MP4 yang tidak tersedia.') +
+=======
+    r(h && h.ffmpeg, 'FFmpeg', h && h.ffmpeg ? 'Terpasang (dipakai untuk konversi MP4).' : 'Tidak ditemukan. Video tetap jadi (.webm); FFmpeg hanya untuk konversi ke MP4. Windows: buka CMD lalu jalankan winget install Gyan.FFmpeg, tutup dan buka ulang start.bat.') +
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
     r(h && h.edge, 'Edge TTS', h && h.edge ? 'Terpasang (suara narasi otomatis, butuh internet).' : 'Belum terpasang. Jalankan: pip install edge-tts') +
     r(h && h.flow_ext, 'Ekstensi Google Flow', h && h.flow_ext ? 'Terhubung (ada tab Flow terbuka).' : 'Belum terhubung. Pasang ekstensi dan buka tab Google Flow yang sudah login.');
 }
 document.addEventListener('se-health', function (e) { renderStatus(e.detail); });
+<<<<<<< HEAD
 function initSettings() {
   loadSettings(); renderLibs();
+=======
+/* ---------- Freesound (SFX gratis CC0) ---------- */
+function fsKey() { return ($('fsKey').value || '').trim(); }
+function fsSaveKey() {
+  var s = getSettings(); s.freesoundKey = fsKey(); localStorage.setItem('se_settings', JSON.stringify(s)); seToast('Data berhasil tersimpan');
+}
+function fsSearch() {
+  var q = $('fsQ').value.trim(), m = $('fsMsg'), box = $('fsRes');
+  m.textContent = ''; box.innerHTML = '';
+  if (!q) { m.textContent = 'Isi kata kunci dulu (bahasa Inggris hasilnya lebih banyak, mis. whoosh, pop, door).'; return; }
+  m.textContent = 'Mencari...';
+  jpost('/api/freesound/search', { key: fsKey(), query: q, maxdur: parseFloat($('fsDur').value) || 10 }).then(function (j) {
+    if (j.error) throw new Error(j.error);
+    m.textContent = j.results.length ? j.results.length + ' hasil CC0 (boleh dipakai tanpa atribusi).' : 'Tidak ada hasil CC0 untuk kata kunci ini.';
+    var have = (LIBIDX.assets || []).map(function (a) { return a.source || ''; });
+    box.innerHTML = j.results.map(function (r) {
+      var added = have.indexOf('https://freesound.org/s/' + r.id + '/') >= 0;
+      return '<div class="libitem"><audio controls preload="none" src="' + esc(r.preview) + '"></audio><span><b>' + esc(r.name) + '</b> · ' + r.duration + ' dtk<br><small class="subtle">' + esc(r.tags.join(', ')) + ' · oleh ' + esc(r.user) + '</small></span>' +
+        '<button class="g" ' + (added ? 'disabled' : '') + ' onclick="fsAdd(' + r.id + ',this)">' + (added ? 'Sudah ada' : 'Tambah') + '</button></div>';
+    }).join('');
+  }).catch(function (e) { m.textContent = 'Gagal: ' + e.message; });
+}
+function fsAdd(id, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  jpost('/api/freesound/add', { key: fsKey(), id: id, tags: ($('fsQ').value || '').trim() }).then(function (j) {
+    if (j.error) throw new Error(j.error);
+    btn.textContent = 'Sudah ada'; seToast('Data berhasil tersimpan'); renderLibs();
+  }).catch(function (e) { btn.disabled = false; btn.textContent = 'Tambah'; $('fsMsg').textContent = 'Gagal: ' + e.message; });
+}
+function initSettings() {
+  loadSettings(); renderLibs();
+  if ($('fsKey')) $('fsKey').value = getSettings().freesoundKey || '';
+>>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
   if (window.seHealth !== undefined) renderStatus(window.seHealth);
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSettings); else initSettings();
