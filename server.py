@@ -68,7 +68,6 @@ class H(SimpleHTTPRequestHandler):
         self.send_error(404)
 
     def do_GET(self):
->>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
         if self.path.startswith("/api/health"):
             try:
                 import edge_tts  # noqa
@@ -76,9 +75,7 @@ class H(SimpleHTTPRequestHandler):
             except Exception:
                 edge = False
             return _json(self, {"ffmpeg": bool(shutil.which("ffmpeg")), "edge": edge,
-<<<<<<< HEAD
                                 "openai_env": bool(os.environ.get("OPENAI_API_KEY")),
-=======
                                 "openai_env": bool(os.environ.get("OPENAI_API_KEY")), "freesound_env": bool(os.environ.get("FREESOUND_API_KEY")),
                                 "flow_ext": time.time() - FLOW["seen"] < 15})
         if self.path.startswith("/api/flow/next"):
@@ -160,15 +157,12 @@ class H(SimpleHTTPRequestHandler):
                 out = lib_add(d)
             elif self.path == "/api/library/delete":
                 out = lib_delete(d["id"])
-<<<<<<< HEAD
-=======
             elif self.path == "/api/research":
                 out = research(d)
             elif self.path == "/api/freesound/search":
                 out = freesound_search(d)
             elif self.path == "/api/freesound/add":
                 out = freesound_add(d)
->>>>>>> 2c3ca03c71db8b4c9842013b69df3211a8f67c2a
             elif self.path == "/api/flow/jobs":
                 out = flow_new(d)
             elif self.path == "/api/flow/progress":
